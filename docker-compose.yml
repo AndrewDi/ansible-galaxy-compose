@@ -64,7 +64,7 @@ services:
         pulpcore-manager check --database default &&
         pulpcore-manager migrate --noinput &&
         echo 'Resetting admin password...' &&
-        pulpcore-manager reset-admin-password --password ${GALAXY_ADMIN_PASSWORD:-admin} &&
+        pulpcore-manager reset-admin-password --password "${GALAXY_ADMIN_PASSWORD:-admin}" &&
         echo 'Database migrations completed successfully!' &&
         echo 'Migration service finished, exiting...'
       "
