@@ -75,7 +75,7 @@ services:
     volumes:
       - galaxy_api_data:/var/lib/pulp
       - ./config/settings.py:/etc/pulp/settings.py:ro
-      - ./certs/database_fields.symmetric.key:/etc/pulp/certs/database_fields.symmetric.key:ro
+      - ./certs:/etc/pulp/certs:ro
     networks:
       - galaxy-network
     depends_on:
@@ -103,7 +103,7 @@ services:
     volumes:
       - galaxy_api_data:/var/lib/pulp
       - ./config/settings.py:/etc/pulp/settings.py:ro
-      - ./certs/database_fields.symmetric.key:/etc/pulp/certs/database_fields.symmetric.key:ro
+      - ./certs:/etc/pulp/certs:ro
     ports:
       - "${GALAXY_API_PORT:-8000}:8000"
     networks:
@@ -155,7 +155,7 @@ services:
     volumes:
       - ./config/settings.py:/etc/pulp/settings.py:ro
       - galaxy_content_data:/var/lib/pulp
-      - ./certs/database_fields.symmetric.key:/etc/pulp/certs/database_fields.symmetric.key:ro
+      - ./certs:/etc/pulp/certs:ro
     ports:
       - "${GALAXY_CONTENT_PORT:-24816}:24816"
     deploy:
@@ -203,7 +203,7 @@ services:
     volumes:
       - "./data:/data"
       - ./config/settings.py:/etc/pulp/settings.py:ro
-      - ./certs/database_fields.symmetric.key:/etc/pulp/certs/database_fields.symmetric.key:ro
+      - ./certs:/etc/pulp/certs:ro
 
   # Galaxy Web UI (Nginx Proxy)
   galaxy-web:
