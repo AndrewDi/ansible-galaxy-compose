@@ -37,13 +37,16 @@ jobs:
 
       - name: Start services
         run: |
-          docker compose up -d
+          docker compose up -d || true
           echo "Checking container status..."
           sleep 10
           docker compose ps
 
       - name: Check for failed containers
+        id: check-containers
         run: |
+          echo "Checking container status..."
+          docker compose ps -a
           FAILED=$(docker compose ps -a --format json | jq -r 'select(.State != "running") | .Name' 2>/dev/null || true)
           if [ -n "$FAILED" ]; then
             echo "Failed containers detected: $FAILED"
@@ -56,9 +59,20 @@ jobs:
             exit 1
           fi
 
-      - name: Show galaxy-migrate logs if it fails
+      - name: Show logs on failure
         if: failure()
-        run: docker compose logs --tail=100 galaxy-migrate
+        run: |
+          echo "=== Container Status ==="
+          docker compose ps -a || true
+          echo ""
+          echo "=== galaxy-migrate logs ==="
+          docker compose logs --tail=100 galaxy-migrate || true
+          echo ""
+          echo "=== galaxy-api logs ==="
+          docker compose logs --tail=50 galaxy-api || true
+          echo ""
+          echo "=== postgres logs ==="
+          docker compose logs --tail=50 postgres || true
 
       - name: Wait for PostgreSQL
         run: |
