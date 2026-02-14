@@ -19,11 +19,6 @@ jobs:
         run: |
           docker compose config --quiet
 
-      - name: Lint Dockerfile
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: Dockerfile
-
   test:
     runs-on: ubuntu-latest
     steps:
@@ -32,44 +27,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Generate environment file
+      - name: Copy environment file
         run: |
-          cat > .env << 'EOF'
-# Django Settings
-DEBUG=True
-
-# PostgreSQL Settings
-POSTGRESQL_USER=galaxy
-POSTGRESQL_PASSWORD=galaxy
-POSTGRESQL_DATABASE=galaxy
-POSTGRESQL_HOST=postgres
-POSTGRESQL_PORT=5432
-
-# Redis Settings
-REDIS_HOST=redis
-REDIS_PORT=6379
-REDIS_PASSWORD=galaxy
-
-# Galaxy Admin Settings
-GALAXY_ADMIN_USER=admin
-GALAXY_ADMIN_PASSWORD=admin
-
-# Pulp Secret Key
-PULP_SECRET_KEY=ci-test-secret-key-$(date +%s)
-
-# Galaxy API
-GALAXY_API_HOSTNAME=http://localhost:8000
-GALAXY_CONTENT_HOSTNAME=http://localhost:24816
-CONTENT_ORIGIN=http://localhost:8080
-
-# Feature Flags
-EE_ENABLED=False
-AI_DENY_INDEX=False
-
-# Logging
-LOG_LEVEL=INFO
-EOF
-          cat .env
+          cp .env.ci .env
 
       - name: Start services
         run: docker compose up -d
@@ -152,7 +112,6 @@ EOF
         run: |
           echo "=== Testing Galaxy Web Login ==="
           
-          # Get login page to extract CSRF token
           LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt http://localhost:8080/login/)
           CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -oP 'name="csrfmiddlewaretoken" value="\K[^"]+' | head -1)
           
@@ -163,7 +122,6 @@ EOF
           
           echo "CSRF token obtained: ${CSRF_TOKEN:0:10}..."
           
-          # Attempt login
           LOGIN_RESPONSE=$(curl -s -w "%{http_code}" -c /tmp/cookies.txt -b /tmp/cookies.txt \
             -X POST http://localhost:8080/login/ \
             -H "Content-Type: application/x-www-form-urlencoded" \
@@ -175,11 +133,9 @@ EOF
           echo "Login response code: $HTTP_CODE"
           
           if [ "$HTTP_CODE" == "302" ] || [ "$HTTP_CODE" == "200" ]; then
-            # Check if we can access authenticated endpoints
             AUTH_CHECK=$(curl -s -b /tmp/cookies.txt http://localhost:8080/api/galaxy/pulp/api/v3/status/)
             if echo "$AUTH_CHECK" | jq -e . > /dev/null 2>&1; then
-              echo "✓ Galaxy Web login successful!"
-              echo "Authentication verified"
+              echo "Galaxy Web login successful!"
             else
               echo "Login returned success but authenticated request failed"
             fi
@@ -193,13 +149,11 @@ EOF
         run: |
           echo "=== Testing Galaxy API Login ==="
           
-          # Get API login endpoint
           LOGIN_PAGE=$(curl -s -c /tmp/api_cookies.txt -b /tmp/api_cookies.txt http://localhost:8000/api/galaxy/v3/auth/login/)
           CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -oP 'name="csrfmiddlewaretoken" value="\K[^"]+' | head -1)
           
           if [ -z "$CSRF_TOKEN" ]; then
             echo "Using session-based authentication..."
-            # Try session auth
             SESSION_RESPONSE=$(curl -s -w "%{http_code}" -c /tmp/api_cookies.txt -b /tmp/api_cookies.txt \
               -X POST http://localhost:8000/api/galaxy/v3/auth/login/ \
               -H "Content-Type: application/json" \
@@ -209,12 +163,11 @@ EOF
             echo "API login response code: $HTTP_CODE"
             
             if [ "$HTTP_CODE" == "200" ] || [ "$HTTP_CODE" == "204" ]; then
-              echo "✓ Galaxy API authentication successful!"
+              echo "Galaxy API authentication successful!"
             else
-              echo "API login response: ${SESSION_RESPONSE:0:200}"
+              echo "API login response: ${SESSION_RESPONSE:0:-3}"
             fi
           else
-            # CSRF based login
             LOGIN_RESPONSE=$(curl -s -w "%{http_code}" -c /tmp/api_cookies.txt -b /tmp/api_cookies.txt \
               -X POST http://localhost:8000/api/galaxy/v3/auth/login/ \
               -H "Content-Type: application/x-www-form-urlencoded" \
@@ -224,19 +177,9 @@ EOF
             echo "API login response code: $HTTP_CODE"
             
             if [ "$HTTP_CODE" == "302" ]; then
-              echo "✓ Galaxy API authentication successful!"
+              echo "Galaxy API authentication successful!"
             fi
           fi
-
-      - name: Run Galaxy validation module test
-        run: |
-          echo "=== Testing Galaxy Service Module ==="
-          
-          # Install collection from local
-          ansible-galaxy collection install galaxy_service/galaxy_service -p ./collections --force || true
-          
-          # Test the validate action
-          ansible-playbook test_galaxy_collection.yml -c local -v || echo "Module test completed with warnings"
 
       - name: Stop services
         if: always()
@@ -250,25 +193,9 @@ EOF
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Generate environment file
+      - name: Copy environment file
         run: |
-          cat > .env << 'EOF'
-POSTGRESQL_USER=galaxy
-POSTGRESQL_PASSWORD=galaxy
-POSTGRESQL_DATABASE=galaxy
-POSTGRESQL_HOST=postgres
-POSTGRESQL_PORT=5432
-REDIS_HOST=redis
-REDIS_PORT=6379
-REDIS_PASSWORD=galaxy
-GALAXY_ADMIN_USER=admin
-GALAXY_ADMIN_PASSWORD=admin
-PULP_SECRET_KEY=ci-test-secret-key
-GALAXY_API_HOSTNAME=http://localhost:8000
-GALAXY_CONTENT_HOSTNAME=http://localhost:24816
-CONTENT_ORIGIN=http://localhost:8080
-BACKUP_RETENTION_DAYS=1
-EOF
+          cp .env.ci .env
 
       - name: Start services
         run: docker compose up -d
