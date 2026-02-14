@@ -1,0 +1,55 @@
+name: Scale Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      worker_count:
+        description: 'Number of workers to scale to'
+        required: true
+        default: '2'
+        type: string
+
+jobs:
+  scale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Start services with specified workers
+        env:
+          WORKER_REPLICAS: ${{ github.inputs.worker_count }}
+        run: |
+          echo "WORKER_REPLICAS=$WORKER_REPLICAS" >> .env
+          docker compose up -d
+
+      - name: Wait for services
+        run: sleep 60
+
+      - name: Check worker count
+        run: |
+          WORKER_COUNT=$(docker compose ps -q galaxy-worker | wc -l)
+          echo "Running workers: $WORKER_COUNT"
+          if [ "$WORKER_COUNT" != "${{ github.inputs.worker_count }}" ]; then
+            echo "Expected ${{ github.inputs.worker_count }} workers, got $WORKER_COUNT"
+            exit 1
+          fi
+
+      - name: Run load test
+        run: |
+          for i in {1..10}; do
+            curl -sf http://localhost:8000/api/galaxy/pulp/api/v3/status/ > /dev/null && echo "Request $i: OK" || echo "Request $i: FAILED"
+          done
+
+      - name: Collect logs on failure
+        if: failure()
+        run: docker compose logs --tail=50
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v

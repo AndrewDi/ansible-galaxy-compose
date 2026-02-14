@@ -1,0 +1,63 @@
+name: Release Galaxy Collection
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: galaxy_collection
+
+      - name: Build collection
+        run: |
+          cd galaxy_collection/galaxy_service
+          ansible-galaxy collection build
+
+      - name: Upload collection artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: galaxy-collection
+          path: galaxy_collection/galaxy_service/galaxy_service-*.tar.gz
+
+  publish-galaxy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download collection artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: galaxy-collection
+          path: .
+
+      - name: Get collection name
+        id: collection
+        run: |
+          COLLECTION_FILE=$(ls galaxy_service-*.tar.gz | head -1)
+          echo "file=$COLLECTION_FILE" >> $GITHUB_OUTPUT
+          echo "name=${COLLECTION_FILE%.tar.gz}" >> $GITHUB_OUTPUT
+
+      - name: Publish to Galaxy
+        uses: ansible/galaxy-action@main
+        with:
+          api_key: ${{ secrets.GALAXY_API_KEY }}
+          collection_path: .
+          distribution: galaxy
+        env:
+          GALAXY_SERVER: 'https://galaxy-web.orb.local'
+
+      - name: Publish to Ansible Galaxy
+        if: github.event_name == 'release'
+        uses: ansible/galaxy-action@main
+        with:
+          api_key: ${{ secrets.GALAXY_API_KEY }}
+          collection_path: .
+          distribution: ansible

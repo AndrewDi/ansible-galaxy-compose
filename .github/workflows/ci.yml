@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Check Docker Compose syntax
+        run: |
+          docker compose config --quiet
+
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for services to be healthy
+        run: |
+          echo "Waiting for services to start..."
+          sleep 30
+
+      - name: Check Galaxy API health
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:8000/api/galaxy/pulp/api/v3/status/ > /dev/null 2>&1; then
+              echo "Galaxy API is ready!"
+              exit 0
+            fi
+            echo "Waiting for Galaxy API... ($i/30)"
+            sleep 5
+          done
+          echo "Galaxy API failed to start"
+          docker compose logs galaxy-api
+          exit 1
+
+      - name: Run Galaxy validation
+        run: |
+          curl -sf http://localhost:8000/api/galaxy/pulp/api/v3/status/ | jq '.database_connection.connected'
+
+      - name: Stop services
+        if: always()
+        run: docker compose down -v
+
+  backup-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Start services
+        run: docker compose up -d
+
+      - name: Wait for services
+        run: sleep 30
+
+      - name: Test backup script
+        run: |
+          chmod +x scripts/backup.sh
+          ./scripts/backup.sh
+
+      - name: Verify backup created
+        run: ls -la backups/
+
+      - name: Stop services
+        if: always()
+        run: docker compose down -v
