@@ -60,11 +60,9 @@ services:
     command: >
       bash -c "
         echo 'Waiting for database to be ready...' &&
-        echo 'Database is ready, running migrations...' &&
         pulpcore-manager check --database default &&
+        echo 'Running migrations...' &&
         pulpcore-manager migrate --noinput &&
-        echo 'Resetting admin password...' &&
-        pulpcore-manager reset-admin-password --password ${GALAXY_ADMIN_PASSWORD:-admin} &&
         echo 'Database migrations completed successfully!' &&
         echo 'Migration service finished, exiting...'
       "
