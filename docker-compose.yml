@@ -64,7 +64,7 @@ services:
         pulpcore-manager check --database default &&
         pulpcore-manager migrate --noinput &&
         echo 'Resetting admin password...' &&
-        pulpcore-manager reset-admin-password --password "${GALAXY_ADMIN_PASSWORD:-admin}" &&
+        pulpcore-manager reset-admin-password --password \"${GALAXY_ADMIN_PASSWORD:-admin}\" &&
         echo 'Database migrations completed successfully!' &&
         echo 'Migration service finished, exiting...'
       "
@@ -75,7 +75,7 @@ services:
     volumes:
       - galaxy_api_data:/var/lib/pulp
       - ./config/settings.py:/etc/pulp/settings.py:ro
-      - ./certs:/etc/pulp/certs:ro
+      - ./certs:/etc/pulp/certs:rw
     networks:
       - galaxy-network
     depends_on:
