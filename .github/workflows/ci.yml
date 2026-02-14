@@ -152,7 +152,7 @@ jobs:
         run: |
           echo "=== Testing Galaxy Web Login ==="
           
-          LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt http://localhost:8080/login/)
+          LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt http://localhost:8080/auth/login/)
           CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -o 'csrfmiddlewaretoken" value="[^"]*"' | sed 's/csrfmiddlewaretoken" value="//;s/"$//' | head -1)
           
           if [ -z "$CSRF_TOKEN" ]; then
@@ -164,9 +164,9 @@ jobs:
           echo "CSRF token obtained: ${CSRF_TOKEN:0:10}..."
           
           LOGIN_RESPONSE=$(curl -s -w "%{http_code}" -c /tmp/cookies.txt -b /tmp/cookies.txt \
-            -X POST http://localhost:8080/login/ \
+            -X POST http://localhost:8080/auth/login/ \
             -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=admin&password=admin&remember=on")
+            -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=${GALAXY_ADMIN_USER:-admin}&password=${GALAXY_ADMIN_PASSWORD:-admin}&next=/")
           
           HTTP_CODE="${LOGIN_RESPONSE: -3}"
           BODY="${LOGIN_RESPONSE:0:-3}"
@@ -191,14 +191,14 @@ jobs:
           echo "=== Testing Galaxy API Login ==="
           
           LOGIN_PAGE=$(curl -s -c /tmp/api_cookies.txt -b /tmp/api_cookies.txt http://localhost:8000/api/galaxy/v3/auth/login/)
-          CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -oP 'name="csrfmiddlewaretoken" value="\K[^"]+' | head -1)
+          CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -o 'csrfmiddlewaretoken" value="[^"]*"' | sed 's/csrfmiddlewaretoken" value="//;s/"$//' | head -1)
           
           if [ -z "$CSRF_TOKEN" ]; then
             echo "Using session-based authentication..."
             SESSION_RESPONSE=$(curl -s -w "%{http_code}" -c /tmp/api_cookies.txt -b /tmp/api_cookies.txt \
               -X POST http://localhost:8000/api/galaxy/v3/auth/login/ \
               -H "Content-Type: application/json" \
-              -d '{"username":"admin","password":"admin"}')
+              -d "{\"username\":\"${GALAXY_ADMIN_USER:-admin}\",\"password\":\"${GALAXY_ADMIN_PASSWORD:-admin}\"}")
             
             HTTP_CODE="${SESSION_RESPONSE: -3}"
             echo "API login response code: $HTTP_CODE"
@@ -212,7 +212,7 @@ jobs:
             LOGIN_RESPONSE=$(curl -s -w "%{http_code}" -c /tmp/api_cookies.txt -b /tmp/api_cookies.txt \
               -X POST http://localhost:8000/api/galaxy/v3/auth/login/ \
               -H "Content-Type: application/x-www-form-urlencoded" \
-              -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=admin&password=admin")
+              -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=${GALAXY_ADMIN_USER:-admin}&password=${GALAXY_ADMIN_PASSWORD:-admin}")
             
             HTTP_CODE="${LOGIN_RESPONSE: -3}"
             echo "API login response code: $HTTP_CODE"
