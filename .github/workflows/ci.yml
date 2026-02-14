@@ -36,7 +36,25 @@ jobs:
           cp .env.ci .env
 
       - name: Start services
-        run: docker compose up -d
+        run: |
+          docker compose up -d
+          echo "Checking container status..."
+          sleep 10
+          docker compose ps
+
+      - name: Check for failed containers
+        run: |
+          FAILED=$(docker compose ps -a --format json | jq -r 'select(.State != "running") | .Name' 2>/dev/null || true)
+          if [ -n "$FAILED" ]; then
+            echo "Failed containers detected: $FAILED"
+            for container in $FAILED; do
+              echo "=== Logs for $container ==="
+              docker compose logs --tail=100 "$container" || true
+            done
+            echo "Container status:"
+            docker compose ps -a
+            exit 1
+          fi
 
       - name: Wait for PostgreSQL
         run: |
