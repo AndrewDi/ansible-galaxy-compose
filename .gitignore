@@ -1,0 +1,93 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Ansible
+*.retry
+*.swp
+*~
+.#*
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.bak
+*.orig
+*.rej
+*~
+.TemporaryItems
+.Trash-*
+.fseventsd
+.Spotlight-V100
+
+# Backup files
+*~
+.*.sw[a-p]
+
+# Volume data (should be backed up separately)
+postgres_data/
+redis_data/
+galaxy_api_data/
+galaxy_content_data/
+galaxy_worker_data/
+
+# Nginx
+nginx/cache/
+
+# Backups
+backups/
+*.sql
+*.dump
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Misc
+*.pem
+*.key
+!.gitkeep

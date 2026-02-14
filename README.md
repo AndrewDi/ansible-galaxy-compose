@@ -17,45 +17,15 @@
 
 ## 镜像来源
 
-本配置使用的 Galaxy 镜像通过编译以下 GitHub 仓库生成：
-
-### Galaxy API 镜像
-
-**仓库**: [ansible/galaxy_ng](https://github.com/ansible/galaxy_ng)  
-**分支**: `stable-4.10`
-
-```bash
-# 克隆并构建 galaxy-ng 镜像
-git clone https://github.com/ansible/galaxy_ng.git
-cd galaxy_ng
-git checkout stable-4.10
-docker build -t galaxy-ng:4.10 .
-```
-
-### Galaxy UI 镜像
-
-**仓库**: [ansible/ansible-hub-ui](https://github.com/ansible/ansible-hub-ui)  
-**分支**: `stable-4.10`
-
-```bash
-# 克隆并构建 ansible-hub-ui 镜像
-git clone https://github.com/ansible/ansible-hub-ui.git
-cd ansible-hub-ui
-git checkout stable-4.10
-docker build -t galaxy-ui:4.10 .
-```
-
-### 预构建镜像
-
-如果不想自行构建，可以使用 quay.io 提供的预构建镜像：
+本配置使用 quay.io 提供的预构建镜像：
 
 ```yaml
-# 修改 docker-compose.yml 中的镜像
+# docker-compose.yml 中的镜像配置
 galaxy-api:
-  image: quay.io/ansible/galaxy-ng:v4.10.0
+  image: quay.io/ansible/galaxy-ng:latest
 
 galaxy-web:
-  image: quay.io/ansible/galaxy-ui:v4.10.0
+  image: quay.io/ansible/galaxy-ui:latest
 ```
 
 ## 快速开始
@@ -110,13 +80,17 @@ docker compose down -v --remove-orphans
 
 | 变量 | 默认值 | 描述 |
 |------|---------|------|
-| `POSTGRES_USER` | galaxy | 数据库用户名 |
-| `POSTGRES_PASSWORD` | galaxy | 数据库密码 |
-| `DB_HOST` | postgres | 数据库主机 |
+| `POSTGRESQL_USER` | galaxy | 数据库用户名 |
+| `POSTGRESQL_PASSWORD` | galaxy | 数据库密码 |
+| `POSTGRESQL_HOST` | postgres | 数据库主机 |
+| `POSTGRESQL_PORT` | 5432 | 数据库端口 |
 | `REDIS_HOST` | redis | Redis 主机 |
+| `REDIS_PORT` | 6379 | Redis 端口 |
+| `REDIS_PASSWORD` | galaxy | Redis 密码 |
 | `GALAXY_ADMIN_USER` | admin | 管理员用户名 |
 | `GALAXY_ADMIN_PASSWORD` | admin | 管理员密码 |
 | `PULP_SECRET_KEY` | - | Django 密钥 |
+| `GALAXY_API_HOSTNAME` | http://galaxy-web.orb.local | Galaxy API 地址 |
 
 ### 自定义镜像版本
 
@@ -133,10 +107,11 @@ services:
 数据保存在以下 Docker 卷中：
 
 - `postgres_data` - PostgreSQL 数据
-- `redis_data` - Redis 数据
 - `galaxy_api_data` - Galaxy API 数据
 - `galaxy_content_data` - Galaxy 内容数据
 - `galaxy_worker_data` - Galaxy Worker 数据
+
+> **注意**: Redis 配置为非持久化模式，数据不会持久化保存
 
 ## 开发与调试
 
