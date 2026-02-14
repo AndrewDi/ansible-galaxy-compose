@@ -89,5 +89,4 @@ htmlcov/
 
 # Misc
 *.pem
-*.key
 !.gitkeep
