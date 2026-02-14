@@ -56,6 +56,10 @@ jobs:
             exit 1
           fi
 
+      - name: Show galaxy-migrate logs if it fails
+        if: failure()
+        run: docker compose logs --tail=100 galaxy-migrate
+
       - name: Wait for PostgreSQL
         run: |
           echo "Waiting for PostgreSQL..."
