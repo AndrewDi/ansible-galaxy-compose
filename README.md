@@ -1,26 +1,26 @@
 # Ansible Galaxy Docker Compose
 
-基于 [galaxy-operator](https://github.com/ansible/galaxy-operator) 的原生 Docker Compose 配置。
+Native Docker Compose configuration based on [galaxy-operator](https://github.com/ansible/galaxy-operator).
 
-## 组件
+## Components
 
-本项目包含以下核心组件：
+This project includes the following core components:
 
-- **PostgreSQL 15** - 主数据库存储 Galaxy 数据
-- **Redis 7** - 缓存和消息队列
-- **Galaxy API** - Pulp 3 Galaxy API 服务
-- **Galaxy Content** - 内容服务组件
-- **Galaxy Worker** - 后台任务工作节点
-- **Galaxy Web UI** - Web 用户界面
+- **PostgreSQL 15** - Primary database for Galaxy data
+- **Redis 7** - Cache and message queue
+- **Galaxy API** - Pulp 3 Galaxy API service
+- **Galaxy Content** - Content service component
+- **Galaxy Worker** - Background task worker
+- **Galaxy Web UI** - Web user interface
 
-> **注意**: 未包含 Nginx，Galaxy 服务直接暴露端口访问
+> **Note**: Nginx is not included, Galaxy services are directly exposed via ports
 
-## 镜像来源
+## Image Sources
 
-本配置使用 quay.io 提供的预构建镜像：
+This configuration uses pre-built images from quay.io:
 
 ```yaml
-# docker-compose.yml 中的镜像配置
+# Image configuration in docker-compose.yml
 galaxy-api:
   image: quay.io/ansible/galaxy-ng:latest
 
@@ -28,73 +28,73 @@ galaxy-web:
   image: quay.io/ansible/galaxy-ui:latest
 ```
 
-## 快速开始
+## Quick Start
 
-### 1. 环境准备
+### 1. Environment Setup
 
 ```bash
-# 复制环境变量文件
+# Copy environment variable file
 cp .env.example .env
 
-# 编辑环境变量（可选）
+# Edit environment variables (optional)
 vim .env
 ```
 
-### 2. 启动服务
+### 2. Start Services
 
 ```bash
-# 创建网络和卷
+# Create network and volumes
 docker compose up -d
 
-# 查看日志
+# View logs
 docker compose logs -f
 ```
 
-### 3. 访问服务
+### 3. Access Services
 
 - **Web UI**: http://localhost:8002
 - **API**: http://localhost:24817/pulp/api/v3/
 - **Admin UI**: http://localhost/ui/
 
-默认管理员账户：
-- 用户名: `admin`
-- 密码: `admin`
+Default admin account:
+- Username: `admin`
+- Password: `admin`
 
-### 4. 停止服务
+### 4. Stop Services
 
 ```bash
 docker compose down
 
-# 保留数据
+# Keep data
 docker compose down -v
 
-# 完全清理（包括卷）
+# Full cleanup (including volumes)
 docker compose down -v --remove-orphans
 ```
 
-## 配置说明
+## Configuration
 
-### 环境变量
+### Environment Variables
 
-主要配置项：
+Main configuration options:
 
-| 变量 | 默认值 | 描述 |
-|------|---------|------|
-| `POSTGRESQL_USER` | galaxy | 数据库用户名 |
-| `POSTGRESQL_PASSWORD` | galaxy | 数据库密码 |
-| `POSTGRESQL_HOST` | postgres | 数据库主机 |
-| `POSTGRESQL_PORT` | 5432 | 数据库端口 |
-| `REDIS_HOST` | redis | Redis 主机 |
-| `REDIS_PORT` | 6379 | Redis 端口 |
-| `REDIS_PASSWORD` | galaxy | Redis 密码 |
-| `GALAXY_ADMIN_USER` | admin | 管理员用户名 |
-| `GALAXY_ADMIN_PASSWORD` | admin | 管理员密码 |
-| `PULP_SECRET_KEY` | - | Django 密钥 |
-| `GALAXY_API_HOSTNAME` | http://galaxy-web.orb.local | Galaxy API 地址 |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRESQL_USER` | galaxy | Database username |
+| `POSTGRESQL_PASSWORD` | galaxy | Database password |
+| `POSTGRESQL_HOST` | postgres | Database host |
+| `POSTGRESQL_PORT` | 5432 | Database port |
+| `REDIS_HOST` | redis | Redis host |
+| `REDIS_PORT` | 6379 | Redis port |
+| `REDIS_PASSWORD` | galaxy | Redis password |
+| `GALAXY_ADMIN_USER` | admin | Admin username |
+| `GALAXY_ADMIN_PASSWORD` | admin | Admin password |
+| `PULP_SECRET_KEY` | - | Django secret key |
+| `GALAXY_API_HOSTNAME` | http://galaxy-web.orb.local | Galaxy API hostname |
 
-### 自定义镜像版本
+### Custom Image Version
 
-在 `docker-compose.yml` 中修改镜像版本：
+Modify image version in `docker-compose.yml`:
 
 ```yaml
 services:
@@ -102,119 +102,120 @@ services:
     image: quay.io/ansible/galaxy-ng:v1.0.0
 ```
 
-### 持久化存储
+### Persistent Storage
 
-数据保存在以下 Docker 卷中：
+Data is stored in the following Docker volumes:
 
-- `postgres_data` - PostgreSQL 数据
-- `galaxy_api_data` - Galaxy API 数据
-- `galaxy_content_data` - Galaxy 内容数据
-- `galaxy_worker_data` - Galaxy Worker 数据
+- `postgres_data` - PostgreSQL data
+- `galaxy_api_data` - Galaxy API data
+- `galaxy_content_data` - Galaxy content data
+- `galaxy_worker_data` - Galaxy worker data
 
-> **注意**: Redis 配置为非持久化模式，数据不会持久化保存
+> **Note**: Redis is configured in non-persistent mode, data will not be persisted
 
-## 开发与调试
+## Development and Debugging
 
-### 查看日志
+### View Logs
 
 ```bash
-# 查看所有服务日志
+# View all service logs
 docker compose logs
 
-# 查看特定服务日志
+# View specific service logs
 docker compose logs galaxy-api
 
-# 实时日志
+# Real-time logs
 docker compose logs -f galaxy-api
 ```
 
-### 进入容器
+### Enter Container
 
 ```bash
-# 进入 API 容器
+# Enter API container
 docker exec -it galaxy-api bash
 
-# 进入数据库容器
+# Enter database container
 docker exec -it galaxy-postgres psql -U galaxy
 ```
 
-### 执行管理命令
+### Execute Management Commands
 
 ```bash
-# 进入 API 容器
+# Enter API container
 docker exec -it galaxy-api bash
 
-# 运行 Django 管理命令
+# Run Django management commands
 python manage.py createsuperuser
 python manage.py collectstatic
 ```
 
-## 生产部署建议
+## Production Deployment Recommendations
 
-1. **修改默认密码**: 更新 `.env` 文件中的所有密码
-2. **使用外部数据库**: 将 PostgreSQL 配置为外部托管数据库
-3. **添加反向代理**: 可选添加 Nginx 或其他代理实现 HTTPS 和负载均衡
-4. **资源限制**: 在 `docker-compose.yml` 中添加资源限制
-5. **备份策略**: 定期备份 `postgres_data` 卷
+1. **Change default passwords**: Update all passwords in `.env` file
+2. **Use external database**: Configure PostgreSQL as externally managed
+3. **Add reverse proxy**: Optionally add Nginx or other proxy for HTTPS and load balancing
+4. **Resource limits**: Add resource limits in `docker-compose.yml`
+5. **Backup strategy**: Regularly backup `postgres_data` volume
 
-## 项目结构
+## Project Structure
 
 ```
 ansible-galaxy/
-├── docker-compose.yml          # 主配置文件
-├── .env.example               # 环境变量示例
-├── .gitignore                 # Git 忽略文件
-├── README.md                  # 本文档
-├── Makefile                   # 便利命令
+├── docker-compose.yml          # Main configuration file
+├── .env.example               # Environment variables example
+├── .gitignore                 # Git ignore file
+├── README.md                  # This document
+├── README.zh-CN.md            # Chinese version
+├── Makefile                   # Convenience commands
 ├── config/
-│   └── settings.py            # Galaxy/Pulp 配置
+│   └── settings.py            # Galaxy/Pulp configuration
 └── init-scripts/
-    └── 01-init-db.sh         # 数据库初始化脚本
+    └── 01-init-db.sh         # Database initialization script
 ```
 
-## 故障排除
+## Troubleshooting
 
-### PostgreSQL 连接失败
+### PostgreSQL Connection Failed
 
 ```bash
-# 检查 PostgreSQL 状态
+# Check PostgreSQL status
 docker compose logs postgres
 
-# 重启 PostgreSQL
+# Restart PostgreSQL
 docker compose restart postgres
 ```
 
-### Galaxy API 启动失败
+### Galaxy API Startup Failed
 
 ```bash
-# 检查 API 日志
+# Check API logs
 docker compose logs galaxy-api
 
-# 确保数据库已完全启动
+# Ensure database is fully started
 docker compose ps
 ```
 
-### 端口冲突
+### Port Conflicts
 
-如果以下端口被占用，可以修改 `docker-compose.yml` 中的端口映射：
+If the following ports are occupied, modify the port mappings in `docker-compose.yml`:
 
-| 服务 | 默认端口 | 说明 |
-|------|----------|------|
-| Galaxy Web | 8002 | Web UI 端口 |
-| Galaxy API | 24817 | API 服务端口 |
-| PostgreSQL | 5432 | 数据库端口 |
-| Redis | 6379 | 缓存端口 |
+| Service | Default Port | Description |
+|---------|-------------|-------------|
+| Galaxy Web | 8002 | Web UI port |
+| Galaxy API | 24817 | API service port |
+| PostgreSQL | 5432 | Database port |
+| Redis | 6379 | Cache port |
 
-修改示例：
+Example modification:
 
 ```yaml
 galaxy-web:
   ports:
-    - "8080:8002"  # 改为 8080 端口
+    - "8080:8002"  # Change to 8080
 ```
 
-## 相关链接
+## Related Links
 
-- [Galaxy Operator 文档](https://galaxy-operator.readthedocs.io/)
+- [Galaxy Operator Documentation](https://galaxy-operator.readthedocs.io/)
 - [Pulp Project](https://pulpproject.org/)
 - [Ansible Galaxy](https://galaxy.ansible.com/)
