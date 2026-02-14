@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "Checking container status..."
           docker compose ps -a
-          FAILED=$(docker compose ps -a --format json | jq -r 'select(.State != "running") | .Name' 2>/dev/null || true)
+          FAILED=$(docker compose ps -a --format json | jq -r 'select(.State != "running" and .ExitCode != 0) | .Name' 2>/dev/null || true)
           if [ -n "$FAILED" ]; then
             echo "Failed containers detected: $FAILED"
             for container in $FAILED; do
