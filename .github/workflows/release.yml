@@ -55,14 +55,14 @@ jobs:
 
       - name: Build collection
         run: |
-          cd galaxy_collection
+          cd galaxy_collection/galaxy_service
           ansible-galaxy collection build
 
       - name: Upload collection artifact
         uses: actions/upload-artifact@v4
         with:
           name: galaxy-collection
-          path: galaxy_collection/galaxy_service-*.tar.gz
+          path: galaxy_collection/galaxy_service/galaxy_service-*.tar.gz
 
   publish-galaxy:
     needs: [deploy, build]
