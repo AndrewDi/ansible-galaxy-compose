@@ -79,21 +79,32 @@ jobs:
       - name: Load environment variables
         run: |
           source .env.ci
-          echo "GALAXY_SERVER=$GALAXY_API_HOSTNAME" >> $GITHUB_ENV
+          # Remove http:// prefix if present to avoid double prefix
+          SERVER_URL="${GALAXY_API_HOSTNAME#http://}"
+          SERVER_URL="${SERVER_URL#https://}"
+          echo "GALAXY_SERVER=$SERVER_URL" >> $GITHUB_ENV
           echo "GALAXY_USERNAME=$GALAXY_ADMIN_USER" >> $GITHUB_ENV
           echo "GALAXY_PASSWORD=$GALAXY_ADMIN_PASSWORD" >> $GITHUB_ENV
 
       - name: Get API Key
         run: |
           echo "Getting Galaxy API key..."
+          echo "Server: ${{ env.GALAXY_SERVER }}"
+          echo "Username: ${{ env.GALAXY_USERNAME }}"
           
           # Step 1: Get login page and CSRF token
           LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt http://${{ env.GALAXY_SERVER }}/auth/login/)
           CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -o 'csrfmiddlewaretoken" value="[^"]*"' | sed 's/csrfmiddlewaretoken" value="//;s/"$//' | head -1)
           echo "CSRF Token: ${CSRF_TOKEN:0:20}..."
           
+          if [ -z "$CSRF_TOKEN" ]; then
+            echo "Failed to get CSRF token"
+            echo "Login page content: $LOGIN_PAGE"
+            exit 1
+          fi
+          
           # Step 2: Login to get session cookie
-          LOGIN_RESPONSE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "${{ env.GALAXY_SERVER }}/auth/login/" \
+          LOGIN_RESPONSE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "http://${{ env.GALAXY_SERVER }}/auth/login/" \
             -H "Content-Type: application/x-www-form-urlencoded" \
             -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=${{ env.GALAXY_USERNAME }}&password=${{ env.GALAXY_PASSWORD }}&next=/" \
             -w "%{http_code}" -o /dev/null)
@@ -103,8 +114,14 @@ jobs:
           CSRF=$(grep csrftoken /tmp/cookies.txt | awk '{print $7}')
           echo "Session CSRF: ${CSRF:0:20}..."
           
+          if [ -z "$CSRF" ]; then
+            echo "Failed to get CSRF from cookie"
+            cat /tmp/cookies.txt
+            exit 1
+          fi
+          
           # Step 4: Get API token using session and CSRF
-          TOKEN_RESPONSE=$(curl -s -b /tmp/cookies.txt -X POST "${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
+          TOKEN_RESPONSE=$(curl -s -b /tmp/cookies.txt -X POST "http://${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
             -H "Content-Type: application/json" \
             -H "X-CSRFToken: $CSRF" \
             -d "{\"username\":\"${{ env.GALAXY_USERNAME }}\",\"password\":\"${{ env.GALAXY_PASSWORD }}\"}")
@@ -121,17 +138,10 @@ jobs:
           
           echo "GALAXY_API_KEY=$API_KEY" >> $GITHUB_ENV
 
-      - name: Publish to local Galaxy
-        if: github.event_name == 'workflow_dispatch'
+      - name: Publish to Galaxy
         run: |
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
-            --server=${{ env.GALAXY_SERVER }} \
-            --api-key=${{ env.GALAXY_API_KEY }}
-
-      - name: Publish to Ansible Galaxy
-        if: github.event_name == 'release'
-        run: |
-          ansible-galaxy collection publish galaxy_service-*.tar.gz \
+            --server=http://${{ env.GALAXY_SERVER }} \
             --api-key=${{ env.GALAXY_API_KEY }}
 
   create-release:
