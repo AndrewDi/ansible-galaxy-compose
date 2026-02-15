@@ -109,8 +109,52 @@ jobs:
           collection_path: .
           distribution: ansible
 
-  cleanup:
+  create-release:
     needs: [deploy, build, publish-galaxy]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download collection artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: galaxy-collection
+          path: .
+
+      - name: Package docker-compose files
+        run: |
+          tar -czvf ansible-galaxy-compose.tar.gz \
+            docker-compose.yml \
+            .env.example \
+            .env.ci \
+            .gitignore \
+            LICENSE \
+            Makefile \
+            README.md \
+            README.zh-CN.md \
+            ansible.cfg \
+            config/ \
+            galaxy_service/ \
+            init-scripts/ \
+            nginx/ \
+            scripts/ \
+            .github/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ansible-galaxy-compose.tar.gz
+            galaxy_service-*.tar.gz
+          draft: false
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cleanup:
+    needs: [deploy, build, publish-galaxy, create-release]
     if: always()
     runs-on: ubuntu-latest
     steps:
