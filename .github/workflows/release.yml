@@ -79,7 +79,7 @@ jobs:
       - name: Load environment variables
         run: |
           source .env.ci
-          # Remove http:// prefix if present to avoid double prefix
+          # Remove http:// or https:// prefix if present to avoid double prefix
           SERVER_URL="${GALAXY_API_HOSTNAME#http://}"
           SERVER_URL="${SERVER_URL#https://}"
           echo "GALAXY_SERVER=$SERVER_URL" >> $GITHUB_ENV
