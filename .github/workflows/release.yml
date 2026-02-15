@@ -76,13 +76,6 @@ jobs:
           name: galaxy-collection
           path: .
 
-      - name: Get collection name
-        id: collection
-        run: |
-          COLLECTION_FILE=$(ls galaxy_service-*.tar.gz | head -1)
-          echo "file=$COLLECTION_FILE" >> $GITHUB_OUTPUT
-          echo "name=${COLLECTION_FILE%.tar.gz}" >> $GITHUB_OUTPUT
-
       - name: Load environment variables
         run: |
           source .env.ci
@@ -92,21 +85,20 @@ jobs:
 
       - name: Publish to local Galaxy
         if: github.event_name == 'workflow_dispatch'
-        uses: ansible/galaxy-action@main
-        with:
-          username: ${{ env.GALAXY_USERNAME }}
-          password: ${{ env.GALAXY_PASSWORD }}
-          collection_path: .
-          distribution: galaxy
+        run: |
+          ansible-galaxy collection publish galaxy_service-*.tar.gz \
+            --server=${{ env.GALAXY_SERVER }} \
+            --username=${{ env.GALAXY_USERNAME }} \
+            --password=${{ env.GALAXY_PASSWORD }} \
+            --distribution=galaxy
 
       - name: Publish to Ansible Galaxy
         if: github.event_name == 'release'
-        uses: ansible/galaxy-action@main
-        with:
-          username: ${{ env.GALAXY_USERNAME }}
-          password: ${{ env.GALAXY_PASSWORD }}
-          collection_path: .
-          distribution: ansible
+        run: |
+          ansible-galaxy collection publish galaxy_service-*.tar.gz \
+            --username=${{ env.GALAXY_USERNAME }} \
+            --password=${{ env.GALAXY_PASSWORD }} \
+            --distribution=ansible
 
   create-release:
     needs: [deploy, build, publish-galaxy]
