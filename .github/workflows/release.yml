@@ -53,9 +53,6 @@ jobs:
         with:
           path: galaxy_collection
 
-      - name: Copy environment file
-        run: cp .env.ci .env
-
       - name: Build collection
         run: |
           cd galaxy_collection/galaxy_service
@@ -71,6 +68,8 @@ jobs:
     needs: [deploy, build]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download collection artifact
         uses: actions/download-artifact@v4
         with:
