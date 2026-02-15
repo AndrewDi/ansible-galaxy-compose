@@ -86,14 +86,21 @@ jobs:
       - name: Get API Key
         run: |
           echo "Getting Galaxy API key..."
-          TOKEN_OUTPUT=$(ansible-galaxy token login --server=${{ env.GALAXY_SERVER }} --username=${{ env.GALAXY_USERNAME }} --password=${{ env.GALAXY_PASSWORD }} 2>&1)
-          echo "$TOKEN_OUTPUT"
-          API_KEY=$(echo "$TOKEN_OUTPUT" | grep -oP '(?<=API Key: )[a-zA-Z0-9]+' | head -1)
+          TOKEN_RESPONSE=$(curl -s -X POST "${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
+            -H "Content-Type: application/json" \
+            -d "{\"username\":\"${{ env.GALAXY_USERNAME }}\",\"password\":\"${{ env.GALAXY_PASSWORD }}\"}")
+          
+          echo "Token response: $TOKEN_RESPONSE"
+          
+          API_KEY=$(echo "$TOKEN_RESPONSE" | grep -oP '(?<="token":")[^"]+' | head -1)
+          
           if [ -z "$API_KEY" ]; then
             echo "Failed to get API key"
+            echo "Response: $TOKEN_RESPONSE"
             exit 1
           fi
-          echo "GALAXY_API_KEY=$API_KEY" >> $GITHUB_ENV
+          
+          echo "GALAXY_API_KEY=$API_KEY" >> $GITHUB_OUTPUT
 
       - name: Publish to local Galaxy
         if: github.event_name == 'workflow_dispatch'
