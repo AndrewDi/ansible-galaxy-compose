@@ -100,7 +100,7 @@ jobs:
             exit 1
           fi
           
-          echo "GALAXY_API_KEY=$API_KEY" >> $GITHUB_OUTPUT
+          echo "GALAXY_API_KEY=$API_KEY" >> $GITHUB_ENV
 
       - name: Publish to local Galaxy
         if: github.event_name == 'workflow_dispatch'
