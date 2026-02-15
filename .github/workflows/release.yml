@@ -80,25 +80,20 @@ jobs:
         run: |
           source .env.ci
           echo "GALAXY_SERVER=$GALAXY_API_HOSTNAME" >> $GITHUB_ENV
-          echo "GALAXY_USERNAME=$GALAXY_ADMIN_USER" >> $GITHUB_ENV
-          echo "GALAXY_PASSWORD=$GALAXY_ADMIN_PASSWORD" >> $GITHUB_ENV
+          echo "GALAXY_API_KEY=$GALAXY_ADMIN_PASSWORD" >> $GITHUB_ENV
 
       - name: Publish to local Galaxy
         if: github.event_name == 'workflow_dispatch'
         run: |
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
             --server=${{ env.GALAXY_SERVER }} \
-            --username=${{ env.GALAXY_USERNAME }} \
-            --password=${{ env.GALAXY_PASSWORD }} \
-            --distribution=galaxy
+            --api-key=${{ env.GALAXY_API_KEY }}
 
       - name: Publish to Ansible Galaxy
         if: github.event_name == 'release'
         run: |
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
-            --username=${{ env.GALAXY_USERNAME }} \
-            --password=${{ env.GALAXY_PASSWORD }} \
-            --distribution=ansible
+            --api-key=${{ env.GALAXY_API_KEY }}
 
   create-release:
     needs: [deploy, build, publish-galaxy]
