@@ -167,14 +167,29 @@ python manage.py collectstatic
 ansible-galaxy/
 ├── docker-compose.yml          # Main configuration file
 ├── .env.example               # Environment variables example
+├── .env.ci                    # CI environment variables
 ├── .gitignore                 # Git ignore file
 ├── README.md                  # This document
 ├── README.zh-CN.md            # Chinese version
+├── LICENSE                    # Mulan PSL v2 License
 ├── Makefile                   # Convenience commands
+├── ansible.cfg                # Ansible configuration
+├── certs/                     # SSL/TLS certificates
 ├── config/
 │   └── settings.py            # Galaxy/Pulp configuration
-└── init-scripts/
-    └── 01-init-db.sh         # Database initialization script
+├── galaxy_service/            # Galaxy collection for testing
+│   ├── GALAXY.yml
+│   ├── README.md
+│   └── plugins/
+├── init-scripts/
+│   └── 01-init-db.sh         # Database initialization script
+├── nginx/                     # Nginx configuration
+│   ├── nginx.conf
+│   └── conf.d/
+└── scripts/                   # Backup and utility scripts
+    ├── backup.sh
+    ├── restore.sh
+    └── scheduler.sh
 ```
 
 ## Troubleshooting

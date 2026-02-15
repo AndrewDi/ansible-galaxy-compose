@@ -135,6 +135,7 @@ jobs:
             README.md \
             README.zh-CN.md \
             ansible.cfg \
+            certs/ \
             config/ \
             galaxy_service/ \
             init-scripts/ \

@@ -167,14 +167,29 @@ python manage.py collectstatic
 ansible-galaxy/
 ├── docker-compose.yml          # 主配置文件
 ├── .env.example               # 环境变量示例
+├── .env.ci                   # CI环境变量
 ├── .gitignore                 # Git 忽略文件
 ├── README.md                  # 英文版本
 ├── README.zh-CN.md            # 本文档
+├── LICENSE                    # 木兰PSL v2许可证
 ├── Makefile                   # 便利命令
+├── ansible.cfg                # Ansible配置
+├── certs/                     # SSL/TLS证书
 ├── config/
 │   └── settings.py            # Galaxy/Pulp 配置
-└── init-scripts/
-    └── 01-init-db.sh         # 数据库初始化脚本
+├── galaxy_service/            # Galaxy测试集合
+│   ├── GALAXY.yml
+│   ├── README.md
+│   └── plugins/
+├── init-scripts/
+│   └── 01-init-db.sh         # 数据库初始化脚本
+├── nginx/                     # Nginx配置
+│   ├── nginx.conf
+│   └── conf.d/
+└── scripts/                   # 备份和工具脚本
+    ├── backup.sh
+    ├── restore.sh
+    └── scheduler.sh
 ```
 
 ## 故障排除
