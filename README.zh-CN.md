@@ -40,6 +40,14 @@ galaxy-web:
 # 复制环境变量文件
 cp .env.example .env
 
+# 创建证书目录
+mkdir -p certs
+
+# 生成数据库加密密钥（pulpcore必需）
+# 首次运行时会自动生成，也可手动生成：
+python3 -c "import os; print(os.urandom(32).hex())" > certs/database_fields.symmetric.key
+chmod 600 certs/database_fields.symmetric.key
+
 # 编辑环境变量（可选）
 vim .env
 ```

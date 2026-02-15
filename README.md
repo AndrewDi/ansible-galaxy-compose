@@ -40,6 +40,14 @@ galaxy-web:
 # Copy environment variable file
 cp .env.example .env
 
+# Create certificates directory
+mkdir -p certs
+
+# Generate database encryption key (required for pulpcore)
+# The key is automatically generated on first run, or you can generate it manually:
+python3 -c "import os; print(os.urandom(32).hex())" > certs/database_fields.symmetric.key
+chmod 600 certs/database_fields.symmetric.key
+
 # Edit environment variables (optional)
 vim .env
 ```
