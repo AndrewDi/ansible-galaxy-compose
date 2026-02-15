@@ -1,0 +1,15 @@
+namespace: galaxy_service
+name: galaxy_service
+version: 1.0.0
+description: Ansible collection for Galaxy service validation - upload and download collections
+readme: README.md
+authors:
+  - Galaxy Team
+license:
+  - GPL-3.0-or-later
+tags:
+  - galaxy
+  - ansible
+  - collection
+  - automation
+repository: https://github.com/galaxy/galaxy_service
