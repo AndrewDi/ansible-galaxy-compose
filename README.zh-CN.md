@@ -1,5 +1,9 @@
 # Ansible Galaxy Docker Compose
 
+[![CI](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/ci.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/ci.yml)
+[![Release](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/release.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/release.yml)
+[![Scale Test](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/scale-test.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/scale-test.yml)
+
 基于 [galaxy-operator](https://github.com/ansible/galaxy-operator) 的原生 Docker Compose 配置。
 
 ## 组件
