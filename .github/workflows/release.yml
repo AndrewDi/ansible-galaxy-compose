@@ -86,8 +86,27 @@ jobs:
       - name: Get API Key
         run: |
           echo "Getting Galaxy API key..."
-          TOKEN_RESPONSE=$(curl -s -X POST "${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
+          
+          # Step 1: Get login page and CSRF token
+          LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt http://${{ env.GALAXY_SERVER }}/auth/login/)
+          CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -o 'csrfmiddlewaretoken" value="[^"]*"' | sed 's/csrfmiddlewaretoken" value="//;s/"$//' | head -1)
+          echo "CSRF Token: ${CSRF_TOKEN:0:20}..."
+          
+          # Step 2: Login to get session cookie
+          LOGIN_RESPONSE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "${{ env.GALAXY_SERVER }}/auth/login/" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=${{ env.GALAXY_USERNAME }}&password=${{ env.GALAXY_PASSWORD }}&next=/" \
+            -w "%{http_code}" -o /dev/null)
+          echo "Login response: $LOGIN_RESPONSE"
+          
+          # Step 3: Get CSRF token from cookie
+          CSRF=$(grep csrftoken /tmp/cookies.txt | awk '{print $7}')
+          echo "Session CSRF: ${CSRF:0:20}..."
+          
+          # Step 4: Get API token using session and CSRF
+          TOKEN_RESPONSE=$(curl -s -b /tmp/cookies.txt -X POST "${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
             -H "Content-Type: application/json" \
+            -H "X-CSRFToken: $CSRF" \
             -d "{\"username\":\"${{ env.GALAXY_USERNAME }}\",\"password\":\"${{ env.GALAXY_PASSWORD }}\"}")
           
           echo "Token response: $TOKEN_RESPONSE"
