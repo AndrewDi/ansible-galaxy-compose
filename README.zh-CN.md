@@ -64,9 +64,10 @@ docker compose logs -f
 
 ### 3. 访问服务
 
-- **Web UI**: http://localhost:8002
-- **API**: http://localhost:24817/pulp/api/v3/
-- **Admin UI**: http://localhost/ui/
+- **Web UI**: http://localhost:8080
+- **API**: http://localhost:8000/api/galaxy/
+- **Pulp API**: http://localhost:8000/pulp/api/v3/
+- **Content**: http://localhost:24816/pulp/content/
 
 默认管理员账户：
 - 用户名: `admin`
@@ -119,9 +120,7 @@ services:
 数据保存在以下 Docker 卷中：
 
 - `postgres_data` - PostgreSQL 数据
-- `galaxy_api_data` - Galaxy API 数据
-- `galaxy_content_data` - Galaxy 内容数据
-- `galaxy_worker_data` - Galaxy Worker 数据
+- `galaxy_api_data` - Galaxy API、Content 和 Worker 共享数据（制品等）
 
 > **注意**: Redis 配置为非持久化模式，数据不会持久化保存
 
@@ -228,8 +227,9 @@ docker compose ps
 
 | 服务 | 默认端口 | 说明 |
 |------|----------|------|
-| Galaxy Web | 8002 | Web UI 端口 |
-| Galaxy API | 24817 | API 服务端口 |
+| Galaxy Web | 8080 | Web UI 端口 |
+| Galaxy API | 8000 | API 服务端口 |
+| Galaxy Content | 24816 | Content 服务端口 |
 | PostgreSQL | 5432 | 数据库端口 |
 | Redis | 6379 | 缓存端口 |
 
@@ -238,7 +238,7 @@ docker compose ps
 ```yaml
 galaxy-web:
   ports:
-    - "8080:8002"  # 改为 8080 端口
+    - "8081:8080"  # 改为 8081 端口
 ```
 
 ## 相关链接

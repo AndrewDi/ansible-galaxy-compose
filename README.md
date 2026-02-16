@@ -64,9 +64,10 @@ docker compose logs -f
 
 ### 3. Access Services
 
-- **Web UI**: http://localhost:8002
-- **API**: http://localhost:24817/pulp/api/v3/
-- **Admin UI**: http://localhost/ui/
+- **Web UI**: http://localhost:8080
+- **API**: http://localhost:8000/api/galaxy/
+- **Pulp API**: http://localhost:8000/pulp/api/v3/
+- **Content**: http://localhost:24816/pulp/content/
 
 Default admin account:
 - Username: `admin`
@@ -119,9 +120,7 @@ services:
 Data is stored in the following Docker volumes:
 
 - `postgres_data` - PostgreSQL data
-- `galaxy_api_data` - Galaxy API data
-- `galaxy_content_data` - Galaxy content data
-- `galaxy_worker_data` - Galaxy worker data
+- `galaxy_api_data` - Galaxy API, Content, and Worker shared data (artifacts, etc.)
 
 > **Note**: Redis is configured in non-persistent mode, data will not be persisted
 
@@ -228,8 +227,9 @@ If the following ports are occupied, modify the port mappings in `docker-compose
 
 | Service | Default Port | Description |
 |---------|-------------|-------------|
-| Galaxy Web | 8002 | Web UI port |
-| Galaxy API | 24817 | API service port |
+| Galaxy Web | 8080 | Web UI port |
+| Galaxy API | 8000 | API service port |
+| Galaxy Content | 24816 | Content service port |
 | PostgreSQL | 5432 | Database port |
 | Redis | 6379 | Cache port |
 
@@ -238,7 +238,7 @@ Example modification:
 ```yaml
 galaxy-web:
   ports:
-    - "8080:8002"  # Change to 8080
+    - "8081:8080"  # Change to 8081
 ```
 
 ## Related Links
