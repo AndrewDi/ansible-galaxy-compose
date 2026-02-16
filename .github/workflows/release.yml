@@ -55,7 +55,8 @@ jobs:
         run: |
           source .env.ci
           # Use full URL without removing prefix
-          echo "GALAXY_SERVER=$GALAXY_API_HOSTNAME" >> $GITHUB_ENV
+          echo "GALAXY_SERVER=$GALAXY_SERVER_HOSTNAME" >> $GITHUB_ENV
+          echo "GALAXY_API_SERVER=$GALAXY_API_HOSTNAME" >> $GITHUB_ENV
           echo "GALAXY_USERNAME=$GALAXY_ADMIN_USER" >> $GITHUB_ENV
           echo "GALAXY_PASSWORD=$GALAXY_ADMIN_PASSWORD" >> $GITHUB_ENV
 
@@ -114,7 +115,7 @@ jobs:
       - name: Publish to Galaxy
         run: |
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
-            --server=${{ env.GALAXY_SERVER }} \
+            --server=${{ env.GALAXY_API_SERVER }} \
             --api-key=${{ env.GALAXY_API_KEY }}
 
       - name: Stop services
