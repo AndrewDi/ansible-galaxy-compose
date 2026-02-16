@@ -101,8 +101,8 @@ services:
       - GUNICORN_TIMEOUT_GRACE_PERIOD=2
       - HOME=/var/lib/pulp
     volumes:
-      - galaxy_api_data:/var/lib/pulp
       - ./config/settings.py:/etc/pulp/settings.py:ro
+      - galaxy_api_data:/var/lib/pulp
       - ./certs:/etc/pulp/certs:ro
     ports:
       - "${GALAXY_API_PORT:-8000}:8000"
@@ -154,7 +154,7 @@ services:
       - GUNICORN_TIMEOUT_GRACE_PERIOD=2
     volumes:
       - ./config/settings.py:/etc/pulp/settings.py:ro
-      - galaxy_content_data:/var/lib/pulp
+      - galaxy_api_data:/var/lib/pulp
       - ./certs:/etc/pulp/certs:ro
     ports:
       - "${GALAXY_CONTENT_PORT:-24816}:24816"
@@ -201,7 +201,7 @@ services:
     networks:
       - galaxy-network
     volumes:
-      - "./data:/data"
+      - galaxy_api_data:/var/lib/pulp
       - ./config/settings.py:/etc/pulp/settings.py:ro
       - ./certs:/etc/pulp/certs:ro
 
@@ -250,8 +250,4 @@ volumes:
   postgres_data:
     driver: local
   galaxy_api_data:
-    driver: local
-  galaxy_content_data:
-    driver: local
-  galaxy_worker_data:
     driver: local
