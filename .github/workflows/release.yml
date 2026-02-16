@@ -10,10 +10,8 @@ on:
         required: false
 
 jobs:
-  deploy:
+  build-and-publish:
     runs-on: ubuntu-latest
-    outputs:
-      service_url: ${{ steps.set_url.outputs.url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -42,39 +40,16 @@ jobs:
           docker compose logs
           exit 1
 
-      - name: Set service URL
-        id: set_url
-        run: echo "url=http://localhost:8000" >> $GITHUB_OUTPUT
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          path: galaxy_collection
-
       - name: Build collection
         run: |
-          cd galaxy_collection/galaxy_service
+          cd galaxy_service
           ansible-galaxy collection build
 
       - name: Upload collection artifact
         uses: actions/upload-artifact@v4
         with:
           name: galaxy-collection
-          path: galaxy_collection/galaxy_service/galaxy_service-*.tar.gz
-
-  publish-galaxy:
-    needs: [deploy, build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download collection artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: galaxy-collection
-          path: .
+          path: galaxy_service/galaxy_service-*.tar.gz
 
       - name: Load environment variables
         run: |
@@ -93,7 +68,7 @@ jobs:
           echo "Username: ${{ env.GALAXY_USERNAME }}"
           
           # Step 1: Get login page and CSRF token
-          LOGIN_PAGE=$(curl -v -s -c /tmp/cookies.txt http://${{ env.GALAXY_SERVER }}/auth/login/)
+          LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt http://${{ env.GALAXY_SERVER }}/auth/login/)
           CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -o 'csrfmiddlewaretoken" value="[^"]*"' | sed 's/csrfmiddlewaretoken" value="//;s/"$//' | head -1)
           echo "CSRF Token: ${CSRF_TOKEN:0:20}..."
           
@@ -104,7 +79,7 @@ jobs:
           fi
           
           # Step 2: Login to get session cookie
-          LOGIN_RESPONSE=$(curl -v -b -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "http://${{ env.GALAXY_SERVER }}/auth/login/" \
+          LOGIN_RESPONSE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "http://${{ env.GALAXY_SERVER }}/auth/login/" \
             -H "Content-Type: application/x-www-form-urlencoded" \
             -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=${{ env.GALAXY_USERNAME }}&password=${{ env.GALAXY_PASSWORD }}&next=/" \
             -w "%{http_code}" -o /dev/null)
@@ -121,7 +96,7 @@ jobs:
           fi
           
           # Step 4: Get API token using session and CSRF
-          TOKEN_RESPONSE=$(curl -v -s -b /tmp/cookies.txt -X POST "http://${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
+          TOKEN_RESPONSE=$(curl -s -b /tmp/cookies.txt -X POST "http://${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
             -H "Content-Type: application/json" \
             -H "X-CSRFToken: $CSRF" \
             -d "{\"username\":\"${{ env.GALAXY_USERNAME }}\",\"password\":\"${{ env.GALAXY_PASSWORD }}\"}")
@@ -144,8 +119,12 @@ jobs:
             --server=http://${{ env.GALAXY_SERVER }} \
             --api-key=${{ env.GALAXY_API_KEY }}
 
+      - name: Stop services
+        if: always()
+        run: docker compose down -v
+
   create-release:
-    needs: [deploy, build, publish-galaxy]
+    needs: [build-and-publish]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
@@ -188,11 +167,3 @@ jobs:
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  cleanup:
-    needs: [deploy, build, publish-galaxy, create-release]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Stop services
-        run: docker compose down -v || true
