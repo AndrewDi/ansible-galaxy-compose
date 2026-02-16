@@ -53,21 +53,21 @@ jobs:
 
       - name: Load environment variables
         run: |
+          set -a
           source .env.ci
-          # Use full URL without removing prefix
-          echo "GALAXY_SERVER=$GALAXY_WEB_HOSTNAME" >> $GITHUB_ENV
-          echo "GALAXY_API_SERVER=$GALAXY_API_HOSTNAME" >> $GITHUB_ENV
+          set +a
+          echo "GALAXY_WEB_HOSTNAME=$GALAXY_WEB_HOSTNAME" >> $GITHUB_ENV
           echo "GALAXY_USERNAME=$GALAXY_ADMIN_USER" >> $GITHUB_ENV
           echo "GALAXY_PASSWORD=$GALAXY_ADMIN_PASSWORD" >> $GITHUB_ENV
 
       - name: Get API Key
         run: |
           echo "Getting Galaxy API key..."
-          echo "Server: ${{ env.GALAXY_SERVER }}"
+          echo "Server: ${{ env.GALAXY_WEB_HOSTNAME }}"
           echo "Username: ${{ env.GALAXY_USERNAME }}"
           
           # Step 1: Get login page and CSRF token
-          LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt ${{ env.GALAXY_SERVER }}/auth/login/)
+          LOGIN_PAGE=$(curl -s -c /tmp/cookies.txt ${{ env.GALAXY_WEB_HOSTNAME }}/auth/login/)
           CSRF_TOKEN=$(echo "$LOGIN_PAGE" | grep -o 'csrfmiddlewaretoken" value="[^"]*"' | sed 's/csrfmiddlewaretoken" value="//;s/"$//' | head -1)
           echo "CSRF Token: ${CSRF_TOKEN:0:20}..."
           
@@ -78,7 +78,7 @@ jobs:
           fi
           
           # Step 2: Login to get session cookie
-          LOGIN_RESPONSE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "${{ env.GALAXY_SERVER }}/auth/login/" \
+          LOGIN_RESPONSE=$(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST "${{ env.GALAXY_WEB_HOSTNAME }}/auth/login/" \
             -H "Content-Type: application/x-www-form-urlencoded" \
             -d "csrfmiddlewaretoken=$CSRF_TOKEN&username=${{ env.GALAXY_USERNAME }}&password=${{ env.GALAXY_PASSWORD }}&next=/" \
             -w "%{http_code}" -o /dev/null)
@@ -95,7 +95,7 @@ jobs:
           fi
           
           # Step 4: Get API token using session and CSRF
-          TOKEN_RESPONSE=$(curl -s -b /tmp/cookies.txt -X POST "${{ env.GALAXY_SERVER }}/api/galaxy/v3/auth/token/" \
+          TOKEN_RESPONSE=$(curl -s -b /tmp/cookies.txt -X POST "${{ env.GALAXY_WEB_HOSTNAME }}/api/galaxy/v3/auth/token/" \
             -H "Content-Type: application/json" \
             -H "X-CSRFToken: $CSRF" \
             -d "{\"username\":\"${{ env.GALAXY_USERNAME }}\",\"password\":\"${{ env.GALAXY_PASSWORD }}\"}")
