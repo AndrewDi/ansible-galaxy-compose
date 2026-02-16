@@ -1,0 +1,12 @@
+- name: Test galaxy_service collection
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Import galaxy_service collection
+      ansible.builtin.import_role:
+        name: galaxy_service.test
+
+    - name: Verify collection downloaded
+      ansible.builtin.debug:
+        msg: "Collection galaxy_service.galaxy_service has been successfully downloaded and executed!"

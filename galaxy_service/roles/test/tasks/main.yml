@@ -1,0 +1,9 @@
+---
+- name: Test role for galaxy_service collection
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Test message
+      ansible.builtin.debug:
+        msg: "galaxy_service.galaxy_service collection is working!"
