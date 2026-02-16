@@ -123,6 +123,7 @@ jobs:
 
       - name: Publish to Galaxy
         run: |
+          cd galaxy_service
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
             --server=${{ env.GALAXY_API_URL }} \
             --api-key=${{ env.GALAXY_API_KEY }}
