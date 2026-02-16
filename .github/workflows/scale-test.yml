@@ -1,6 +1,9 @@
 name: Scale Test
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       worker_count:
