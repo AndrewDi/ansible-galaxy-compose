@@ -111,11 +111,20 @@ jobs:
           fi
           
           echo "GALAXY_API_KEY=$API_KEY" >> $GITHUB_ENV
+          echo "GALAXY_API_URL=${{ env.GALAXY_WEB_HOSTNAME }}/api/galaxy/" >> $GITHUB_ENV
+
+      - name: Create namespace
+        run: |
+          NAMESPACE_RESPONSE=$(curl -s -X POST "${{ env.GALAXY_API_URL }}v3/namespaces/" \
+            -H "Authorization: Token ${{ env.GALAXY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"galaxy_service","groups":[]}')
+          echo "Namespace response: $NAMESPACE_RESPONSE"
 
       - name: Publish to Galaxy
         run: |
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
-            --server=${{ env.GALAXY_WEB_HOSTNAME }} \
+            --server=${{ env.GALAXY_API_URL }} \
             --api-key=${{ env.GALAXY_API_KEY }}
 
       - name: Stop services
