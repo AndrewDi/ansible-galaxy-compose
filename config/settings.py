@@ -99,6 +99,8 @@ GALAXY_FEATURE_FLAGS = {
     'ai_deny_index': os.environ.get('AI_DENY_INDEX', 'False').lower() == 'true',
 }
 
+GALAXY_ENABLE_ANONYMOUS_ACCESS = os.environ.get('GALAXY_ENABLE_ANONYMOUS_ACCESS', 'True').lower() == 'true'
+
 GALAXY_REQUIRE_CONTENT_APPROVAL = os.environ.get('GALAXY_REQUIRE_CONTENT_APPROVAL', 'True').lower() == 'true'
 GALAXY_API_PATH_PREFIX = os.environ.get('GALAXY_API_PATH_PREFIX', 'api/galaxy')
 GALAXY_ENABLE_LEGACY_ROLES = os.environ.get('GALAXY_ENABLE_LEGACY_ROLES', 'True').lower() == 'true'
