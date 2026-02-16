@@ -3,10 +3,16 @@
   connection: local
   gather_facts: false
   tasks:
-    - name: Import galaxy_service collection
-      ansible.builtin.import_role:
-        name: galaxy_service.test
+    - name: Test module - validate Galaxy service
+      galaxy_service.galaxy_service.galaxy_service:
+        galaxy_url: "http://localhost:8080"
+        username: "admin"
+        password: "admin"
+        action: validate
 
-    - name: Verify collection downloaded
-      ansible.builtin.debug:
-        msg: "Collection galaxy_service.galaxy_service has been successfully downloaded and executed!"
+    - name: Test module - test complete workflow
+      galaxy_service.galaxy_service.galaxy_service:
+        galaxy_url: "http://localhost:8080"
+        username: "admin"
+        password: "admin"
+        action: test
