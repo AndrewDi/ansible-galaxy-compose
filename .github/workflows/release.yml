@@ -55,7 +55,7 @@ jobs:
         run: |
           source .env.ci
           # Use full URL without removing prefix
-          echo "GALAXY_SERVER=$GALAXY_SERVER_HOSTNAME" >> $GITHUB_ENV
+          echo "GALAXY_SERVER=$GALAXY_WEB_HOSTNAME" >> $GITHUB_ENV
           echo "GALAXY_API_SERVER=$GALAXY_API_HOSTNAME" >> $GITHUB_ENV
           echo "GALAXY_USERNAME=$GALAXY_ADMIN_USER" >> $GITHUB_ENV
           echo "GALAXY_PASSWORD=$GALAXY_ADMIN_PASSWORD" >> $GITHUB_ENV
