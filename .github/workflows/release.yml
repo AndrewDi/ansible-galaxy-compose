@@ -115,7 +115,7 @@ jobs:
       - name: Publish to Galaxy
         run: |
           ansible-galaxy collection publish galaxy_service-*.tar.gz \
-            --server=${{ env.GALAXY_API_SERVER }} \
+            --server=${{ env.GALAXY_WEB_HOSTNAME }} \
             --api-key=${{ env.GALAXY_API_KEY }}
 
       - name: Stop services
