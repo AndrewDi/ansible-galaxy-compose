@@ -26,7 +26,7 @@ jobs:
 
       - name: Start services with specified workers
         env:
-          WORKER_REPLICAS: ${{ github.inputs.worker_count }}
+          WORKER_REPLICAS: ${{ github.event.inputs.worker_count || '2' }}
         run: |
           echo "WORKER_REPLICAS=$WORKER_REPLICAS" >> .env
           docker compose up -d
@@ -38,8 +38,8 @@ jobs:
         run: |
           WORKER_COUNT=$(docker compose ps -q galaxy-worker | wc -l)
           echo "Running workers: $WORKER_COUNT"
-          if [ "$WORKER_COUNT" != "${{ github.inputs.worker_count }}" ]; then
-            echo "Expected ${{ github.inputs.worker_count }} workers, got $WORKER_COUNT"
+          if [ "$WORKER_COUNT" != "${{ github.event.inputs.worker_count || '2' }}" ]; then
+            echo "Expected ${{ github.event.inputs.worker_count || '2' }} workers, got $WORKER_COUNT"
             exit 1
           fi
 
