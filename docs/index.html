@@ -50,6 +50,33 @@
             opacity: 0.9;
             font-weight: 300;
         }
+        .header-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .lang-switch {
+            display: flex;
+            gap: 10px;
+        }
+        .lang-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .lang-btn.active {
+            background: white;
+            color: var(--primary);
+        }
         .badge {
             display: inline-block;
             background: rgba(255,255,255,0.15);
@@ -215,8 +242,14 @@
 <body>
     <header>
         <div class="container">
-            <h1>Ansible Galaxy Docker Compose</h1>
-            <p>Native Docker Compose configuration for local Galaxy server</p>
+            <div class="header-controls">
+                <div class="lang-switch">
+                    <button class="lang-btn" data-lang="en">English</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                </div>
+            </div>
+            <h1 data-i18n="title">Ansible Galaxy Docker Compose</h1>
+            <p data-i18n="subtitle">Native Docker Compose configuration for local Galaxy server</p>
             <div style="margin-top: 25px;">
                 <span class="badge">PostgreSQL 15</span>
                 <span class="badge">Redis 7</span>
@@ -229,18 +262,18 @@
     <div class="container">
         <div class="content">
             <div class="section">
-                <h2>Services</h2>
+                <h2 data-i18n="services">Services</h2>
                 <div class="services">
                     <div class="service-card">
-                        <h3>Galaxy Web UI</h3>
+                        <h3 data-i18n="webUi">Galaxy Web UI</h3>
                         <p>Web interface at <strong>http://localhost:8080</strong></p>
                     </div>
                     <div class="service-card">
-                        <h3>Galaxy API</h3>
+                        <h3 data-i18n="api">Galaxy API</h3>
                         <p>REST API at <strong>http://localhost:8000/api/galaxy/</strong></p>
                     </div>
                     <div class="service-card">
-                        <h3>Galaxy Content</h3>
+                        <h3 data-i18n="content">Galaxy Content</h3>
                         <p>Content service at <strong>http://localhost:24816</strong></p>
                     </div>
                     <div class="service-card">
@@ -252,14 +285,14 @@
                         <p>Cache at <strong>localhost:6379</strong></p>
                     </div>
                     <div class="service-card">
-                        <h3>Galaxy Worker</h3>
-                        <p>Background task worker (scalable)</p>
+                        <h3 data-i18n="worker">Galaxy Worker</h3>
+                        <p data-i18n="workerDesc">Background task worker (scalable)</p>
                     </div>
                 </div>
             </div>
 
             <div class="section">
-                <h2>Quick Start</h2>
+                <h2 data-i18n="quickStart">Quick Start</h2>
                 <div class="code">
 <pre><span class="code-comment"># Clone and setup</span>
 <span class="code-keyword">git</span> clone https://github.com/AndrewDi/ansible-galaxy-compose.git
@@ -282,10 +315,10 @@ docker compose ps</pre>
             </div>
 
             <div class="section">
-                <h2>Default Ports</h2>
+                <h2 data-i18n="defaultPorts">Default Ports</h2>
                 <table>
                     <tr>
-                        <th>Service</th>
+                        <th data-i18n="service">Service</th>
                         <th>Port</th>
                         <th>URL</th>
                     </tr>
@@ -318,149 +351,149 @@ docker compose ps</pre>
             </div>
 
             <div class="section">
-                <h2>Default Credentials</h2>
+                <h2 data-i18n="defaultCredentials">Default Credentials</h2>
                 <div class="info-box">
-                    <p><strong>Username:</strong> admin</p>
-                    <p><strong>Password:</strong> admin</p>
+                    <p><strong data-i18n="username">Username:</strong> admin</p>
+                    <p><strong data-i18n="password">Password:</strong> admin</p>
                 </div>
             </div>
 
             <div class="section">
-                <h2>Configuration Files</h2>
+                <h2 data-i18n="configFiles">Configuration Files</h2>
                 <div class="nav-tabs">
-                    <div class="nav-tab active" onclick="switchTab('env')">.env Variables</div>
+                    <div class="nav-tab active" onclick="switchTab('env')" data-i18n="envVars">.env Variables</div>
                     <div class="nav-tab" onclick="switchTab('settings')">settings.py</div>
                 </div>
                 
                 <div id="env" class="tab-content active">
                     <div class="config-section">
-                        <h3>Database Settings</h3>
+                        <h3 data-i18n="dbSettings">Database Settings</h3>
                         <table>
-                            <tr><td>POSTGRESQL_USER</td><td>galaxy</td><td>Database username</td></tr>
-                            <tr><td>POSTGRESQL_PASSWORD</td><td>galaxy</td><td>Database password</td></tr>
-                            <tr><td>POSTGRESQL_DATABASE</td><td>galaxy</td><td>Database name</td></tr>
-                            <tr><td>POSTGRESQL_HOST</td><td>postgres</td><td>Database host</td></tr>
-                            <tr><td>POSTGRESQL_PORT</td><td>5432</td><td>Database port</td></tr>
+                            <tr><td>POSTGRESQL_USER</td><td>galaxy</td><td data-i18n="dbUser">Database username</td></tr>
+                            <tr><td>POSTGRESQL_PASSWORD</td><td>galaxy</td><td data-i18n="dbPass">Database password</td></tr>
+                            <tr><td>POSTGRESQL_DATABASE</td><td>galaxy</td><td data-i18n="dbName">Database name</td></tr>
+                            <tr><td>POSTGRESQL_HOST</td><td>postgres</td><td data-i18n="dbHost">Database host</td></tr>
+                            <tr><td>POSTGRESQL_PORT</td><td>5432</td><td data-i18n="dbPort">Database port</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Redis Settings</h3>
+                        <h3 data-i18n="redisSettings">Redis Settings</h3>
                         <table>
-                            <tr><td>REDIS_HOST</td><td>redis</td><td>Redis host</td></tr>
-                            <tr><td>REDIS_PORT</td><td>6379</td><td>Redis port</td></tr>
-                            <tr><td>REDIS_PASSWORD</td><td>galaxy</td><td>Redis password</td></tr>
+                            <tr><td>REDIS_HOST</td><td>redis</td><td data-i18n="redisHost">Redis host</td></tr>
+                            <tr><td>REDIS_PORT</td><td>6379</td><td data-i18n="redisPort">Redis port</td></tr>
+                            <tr><td>REDIS_PASSWORD</td><td>galaxy</td><td data-i18n="redisPass">Redis password</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Galaxy Admin Settings</h3>
+                        <h3 data-i18n="adminSettings">Galaxy Admin Settings</h3>
                         <table>
-                            <tr><td>GALAXY_ADMIN_USER</td><td>admin</td><td>Admin username</td></tr>
-                            <tr><td>GALAXY_ADMIN_PASSWORD</td><td>admin</td><td>Admin password</td></tr>
+                            <tr><td>GALAXY_ADMIN_USER</td><td>admin</td><td data-i18n="adminUser">Admin username</td></tr>
+                            <tr><td>GALAXY_ADMIN_PASSWORD</td><td>admin</td><td data-i18n="adminPass">Admin password</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>API Settings</h3>
+                        <h3 data-i18n="apiSettings">API Settings</h3>
                         <table>
-                            <tr><td>GALAXY_API_HOSTNAME</td><td>http://galaxy-web.orb.local</td><td>Galaxy API hostname</td></tr>
-                            <tr><td>GALAXY_CONTENT_HOSTNAME</td><td>http://galaxy-web.orb.local</td><td>Content hostname</td></tr>
-                            <tr><td>CONTENT_ORIGIN</td><td>http://galaxy-web.orb.local</td><td>Content origin URL</td></tr>
-                            <tr><td>GALAXY_API_PATH_PREFIX</td><td>api/galaxy</td><td>API path prefix</td></tr>
+                            <tr><td>GALAXY_API_HOSTNAME</td><td>http://galaxy-web.orb.local</td><td data-i18n="apiHost">Galaxy API hostname</td></tr>
+                            <tr><td>GALAXY_CONTENT_HOSTNAME</td><td>http://galaxy-web.orb.local</td><td data-i18n="contentHost">Content hostname</td></tr>
+                            <tr><td>CONTENT_ORIGIN</td><td>http://galaxy-web.orb.local</td><td data-i18n="contentOrigin">Content origin URL</td></tr>
+                            <tr><td>GALAXY_API_PATH_PREFIX</td><td>api/galaxy</td><td data-i18n="apiPrefix">API path prefix</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Feature Flags</h3>
+                        <h3 data-i18n="featureFlags">Feature Flags</h3>
                         <table>
-                            <tr><td>GALAXY_REQUIRE_CONTENT_APPROVAL</td><td>True</td><td>Require approval before publishing</td></tr>
-                            <tr><td>GALAXY_ENABLE_ANONYMOUS_ACCESS</td><td>True</td><td>Allow anonymous access</td></tr>
-                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD</td><td>True</td><td>Allow anonymous downloads</td></tr>
-                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS</td><td>True</td><td>Allow anonymous collection access</td></tr>
-                            <tr><td>EE_ENABLED</td><td>False</td><td>Enable Execution Environments</td></tr>
-                            <tr><td>GALAXY_ENABLE_LEGACY_ROLES</td><td>True</td><td>Enable legacy roles support</td></tr>
+                            <tr><td>GALAXY_REQUIRE_CONTENT_APPROVAL</td><td>True</td><td data-i18n="requireApproval">Require approval before publishing</td></tr>
+                            <tr><td>GALAXY_ENABLE_ANONYMOUS_ACCESS</td><td>True</td><td data-i18n="anonAccess">Allow anonymous access</td></tr>
+                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD</td><td>True</td><td data-i18n="anonDownload">Allow anonymous downloads</td></tr>
+                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS</td><td>True</td><td data-i18n="anonCollection">Allow anonymous collection access</td></tr>
+                            <tr><td>EE_ENABLED</td><td>False</td><td data-i18n="eeEnabled">Enable Execution Environments</td></tr>
+                            <tr><td>GALAXY_ENABLE_LEGACY_ROLES</td><td>True</td><td data-i18n="legacyRoles">Enable legacy roles support</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Worker Scaling</h3>
+                        <h3 data-i18n="workerScaling">Worker Scaling</h3>
                         <table>
-                            <tr><td>WORKER_REPLICAS</td><td>1</td><td>Number of worker replicas</td></tr>
+                            <tr><td>WORKER_REPLICAS</td><td>1</td><td data-i18n="workerReplicas">Number of worker replicas</td></tr>
                         </table>
                     </div>
                 </div>
                 
                 <div id="settings" class="tab-content">
                     <div class="config-section">
-                        <h3>Database (DATABASES)</h3>
+                        <h3 data-i18n="database">Database (DATABASES)</h3>
                         <table>
-                            <tr><td>ENGINE</td><td>django.db.backends.postgresql</td><td>Database engine</td></tr>
-                            <tr><td>NAME</td><td>galaxy</td><td>Database name</td></tr>
-                            <tr><td>USER</td><td>galaxy</td><td>Database user</td></tr>
-                            <tr><td>PASSWORD</td><td>galaxy</td><td>Database password</td></tr>
-                            <tr><td>HOST</td><td>postgres</td><td>Database host</td></tr>
-                            <tr><td>PORT</td><td>5432</td><td>Database port</td></tr>
-                            <tr><td>CONN_MAX_AGE</td><td>0</td><td>Connection lifetime (seconds)</td></tr>
+                            <tr><td>ENGINE</td><td>django.db.backends.postgresql</td><td data-i18n="dbEngine">Database engine</td></tr>
+                            <tr><td>NAME</td><td>galaxy</td><td data-i18n="dbName">Database name</td></tr>
+                            <tr><td>USER</td><td>galaxy</td><td data-i18n="dbUser">Database user</td></tr>
+                            <tr><td>PASSWORD</td><td>galaxy</td><td data-i18n="dbPass">Database password</td></tr>
+                            <tr><td>HOST</td><td>postgres</td><td data-i18n="dbHost">Database host</td></tr>
+                            <tr><td>PORT</td><td>5432</td><td data-i18n="dbPort">Database port</td></tr>
+                            <tr><td>CONN_MAX_AGE</td><td>0</td><td data-i18n="connMaxAge">Connection lifetime (seconds)</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Redis Cache</h3>
+                        <h3 data-i18n="redisCache">Redis Cache</h3>
                         <table>
-                            <tr><td>REDIS_PASSWORD</td><td>galaxy</td><td>Redis password</td></tr>
-                            <tr><td>REDIS_HOST</td><td>redis</td><td>Redis host</td></tr>
-                            <tr><td>REDIS_PORT</td><td>6379</td><td>Redis port</td></tr>
-                            <tr><td>CACHE_URL</td><td>redis://:galaxy@redis:6379/0</td><td>Redis connection URL</td></tr>
+                            <tr><td>REDIS_PASSWORD</td><td>galaxy</td><td data-i18n="redisPass">Redis password</td></tr>
+                            <tr><td>REDIS_HOST</td><td>redis</td><td data-i18n="redisHost">Redis host</td></tr>
+                            <tr><td>REDIS_PORT</td><td>6379</td><td data-i18n="redisPort">Redis port</td></tr>
+                            <tr><td>CACHE_URL</td><td>redis://:galaxy@redis:6379/0</td><td data-i18n="cacheUrl">Redis connection URL</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Security</h3>
+                        <h3 data-i18n="security">Security</h3>
                         <table>
-                            <tr><td>SECRET_KEY</td><td>(from PULP_SECRET_KEY)</td><td>Django secret key</td></tr>
-                            <tr><td>ALLOWED_HOSTS</td><td>*</td><td>Allowed host patterns</td></tr>
+                            <tr><td>SECRET_KEY</td><td>(from PULP_SECRET_KEY)</td><td data-i18n="secretKey">Django secret key</td></tr>
+                            <tr><td>ALLOWED_HOSTS</td><td>*</td><td data-i18n="allowedHosts">Allowed host patterns</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Storage</h3>
+                        <h3 data-i18n="storage">Storage</h3>
                         <table>
-                            <tr><td>FILE_UPLOAD_MAX_MEMORY_SIZE</td><td>104857600 (100MB)</td><td>Max file size in memory</td></tr>
-                            <tr><td>DATA_UPLOAD_MAX_MEMORY_SIZE</td><td>524288000 (500MB)</td><td>Max data upload size</td></tr>
+                            <tr><td>FILE_UPLOAD_MAX_MEMORY_SIZE</td><td>104857600 (100MB)</td><td data-i18n="fileUpload">Max file size in memory</td></tr>
+                            <tr><td>DATA_UPLOAD_MAX_MEMORY_SIZE</td><td>524288000 (500MB)</td><td data-i18n="dataUpload">Max data upload size</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Galaxy Settings</h3>
+                        <h3 data-i18n="galaxySettings">Galaxy Settings</h3>
                         <table>
-                            <tr><td>GALAXY_API_DEFAULT_DISTRIBUTION_BASE_PATH</td><td>published</td><td>Default distribution path</td></tr>
-                            <tr><td>GALAXY_API_STAGING_DISTRIBUTION_BASE_PATH</td><td>staging</td><td>Staging distribution path</td></tr>
-                            <tr><td>ANSIBLE_API_HOSTNAME</td><td>(from GALAXY_API_HOSTNAME)</td><td>API hostname</td></tr>
-                            <tr><td>X_PULP_CONTENT_HOST</td><td>galaxy-content</td><td>Content host</td></tr>
-                            <tr><td>X_PULP_CONTENT_PORT</td><td>24816</td><td>Content port</td></tr>
+                            <tr><td>GALAXY_API_DEFAULT_DISTRIBUTION_BASE_PATH</td><td>published</td><td data-i18n="distPath">Default distribution path</td></tr>
+                            <tr><td>GALAXY_API_STAGING_DISTRIBUTION_BASE_PATH</td><td>staging</td><td data-i18n="stagingPath">Staging distribution path</td></tr>
+                            <tr><td>ANSIBLE_API_HOSTNAME</td><td>(from GALAXY_API_HOSTNAME)</td><td data-i18n="ansibleApi">API hostname</td></tr>
+                            <tr><td>X_PULP_CONTENT_HOST</td><td>galaxy-content</td><td data-i18n="pulpContentHost">Content host</td></tr>
+                            <tr><td>X_PULP_CONTENT_PORT</td><td>24816</td><td data-i18n="pulpContentPort">Content port</td></tr>
                         </table>
                     </div>
                     
                     <div class="config-section">
-                        <h3>Feature Flags</h3>
+                        <h3 data-i18n="featureFlags">Feature Flags</h3>
                         <table>
-                            <tr><td>GALAXY_ENABLE_ANONYMOUS_ACCESS</td><td>True</td><td>Enable anonymous access</td></tr>
-                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD</td><td>True</td><td>Allow unauthenticated downloads</td></tr>
-                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS</td><td>True</td><td>Allow unauthenticated collection access</td></tr>
-                            <tr><td>GALAXY_REQUIRE_CONTENT_APPROVAL</td><td>False</td><td>Require content approval</td></tr>
-                            <tr><td>GALAXY_ENABLE_LEGACY_ROLES</td><td>True</td><td>Enable legacy roles</td></tr>
-                            <tr><td>GALAXY_DYNAMIC_SETTINGS</td><td>True</td><td>Enable dynamic settings</td></tr>
-                            <tr><td>EE_ENABLED</td><td>False</td><td>Enable Execution Environments</td></tr>
+                            <tr><td>GALAXY_ENABLE_ANONYMOUS_ACCESS</td><td>True</td><td data-i18n="anonAccess">Enable anonymous access</td></tr>
+                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD</td><td>True</td><td data-i18n="anonDownload">Allow unauthenticated downloads</td></tr>
+                            <tr><td>GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS</td><td>True</td><td data-i18n="anonCollection">Allow unauthenticated collection access</td></tr>
+                            <tr><td>GALAXY_REQUIRE_CONTENT_APPROVAL</td><td>False</td><td data-i18n="requireApproval">Require content approval</td></tr>
+                            <tr><td>GALAXY_ENABLE_LEGACY_ROLES</td><td>True</td><td data-i18n="legacyRoles">Enable legacy roles</td></tr>
+                            <tr><td>GALAXY_DYNAMIC_SETTINGS</td><td>True</td><td data-i18n="dynamicSettings">Enable dynamic settings</td></tr>
+                            <tr><td>EE_ENABLED</td><td>False</td><td data-i18n="eeEnabled">Enable Execution Environments</td></tr>
                         </table>
                     </div>
                 </div>
             </div>
 
             <div class="section">
-                <h2>ansible-galaxy Command Reference</h2>
+                <h2 data-i18n="ansibleCmd">ansible-galaxy Command Reference</h2>
                 
-                <h3>Collection Commands</h3>
+                <h3 data-i18n="collectionCmd">Collection Commands</h3>
                 <div class="code">
 <pre><span class="code-comment"># Install a collection from Galaxy</span>
 ansible-galaxy collection install namespace.collection
@@ -489,7 +522,7 @@ ansible-galaxy collection publish namespace-collection-1.0.0.tar.gz \
   --api-key=YOUR_API_KEY</pre>
                 </div>
                 
-                <h3>Role Commands</h3>
+                <h3 data-i18n="roleCmd">Role Commands</h3>
                 <div class="code">
 <pre><span class="code-comment"># Install a role from Galaxy</span>
 ansible-galaxy role install namespace.role_name
@@ -504,7 +537,7 @@ ansible-galaxy role list
 ansible-galaxy role remove namespace.role_name</pre>
                 </div>
                 
-                <h3>Galaxy Server Commands</h3>
+                <h3 data-i18n="serverCmd">Galaxy Server Commands</h3>
                 <div class="code">
 <pre><span class="code-comment"># Login to Galaxy</span>
 ansible-galaxy login
@@ -516,7 +549,7 @@ ansible-galaxy server status
 ansible-galaxy server list</pre>
                 </div>
                 
-                <h3>Configuration</h3>
+                <h3 data-i18n="configCmd">Configuration</h3>
                 <div class="code">
 <pre><span class="code-comment"># Display current configuration</span>
 ansible-galaxy config view
@@ -529,51 +562,51 @@ ansible-galaxy config server_list.test.server_url http://localhost:8000</pre>
                 </div>
                 
                 <div class="example-box">
-                    <strong>Example: Full Workflow</strong>
+                    <strong data-i18n="fullWorkflow">Example: Full Workflow</strong>
                     <pre style="margin-top: 10px;">
-# 1. Build collection
+<span class="code-comment"># 1. Build collection</span>
 ansible-galaxy collection build
 
-# 2. Publish to local Galaxy server
+<span class="code-comment"># 2. Publish to local Galaxy server</span>
 ansible-galaxy collection publish galaxy_service-1.0.0.tar.gz \
   --server=http://localhost:8000 \
   --api-key=YOUR_API_KEY
 
-# 3. Install collection
+<span class="code-comment"># 3. Install collection</span>
 ansible-galaxy collection install galaxy_service.galaxy_service \
   --server=http://localhost:8000
 
-# 4. Use in playbook
+<span class="code-comment"># 4. Use in playbook</span>
 ansible-playbook my_playbook.yml</pre>
                 </div>
             </div>
 
             <div class="section">
-                <h2>Storage Volumes</h2>
+                <h2 data-i18n="storageVolumes">Storage Volumes</h2>
                 <table>
                     <tr>
-                        <th>Volume</th>
-                        <th>Description</th>
+                        <th data-i18n="volume">Volume</th>
+                        <th data-i18n="description">Description</th>
                     </tr>
                     <tr>
                         <td>postgres_data</td>
-                        <td>PostgreSQL database</td>
+                        <td data-i18n="postgresData">PostgreSQL database</td>
                     </tr>
                     <tr>
                         <td>galaxy_api_data</td>
-                        <td>Galaxy artifacts, uploads, and shared data</td>
+                        <td data-i18n="galaxyData">Galaxy artifacts, uploads, and shared data</td>
                     </tr>
                 </table>
             </div>
 
             <div class="section">
-                <h2>GitHub Actions</h2>
-                <p>This project includes automated workflows:</p>
+                <h2 data-i18n="githubActions">GitHub Actions</h2>
+                <p data-i18n="githubActionsDesc">This project includes automated workflows:</p>
                 <ul style="margin: 15px 0; padding-left: 20px;">
-                    <li><strong>CI</strong> - Continuous integration testing</li>
-                    <li><strong>Release</strong> - Build and publish Galaxy collection</li>
-                    <li><strong>Scale Test</strong> - Test worker scaling capabilities</li>
-                    <li><strong>Pages</strong> - Deploy documentation</li>
+                    <li><strong>CI</strong> - <span data-i18n="ciDesc">Continuous integration testing</span></li>
+                    <li><strong>Release</strong> - <span data-i18n="releaseDesc">Build and publish Galaxy collection</span></li>
+                    <li><strong>Scale Test</strong> - <span data-i18n="scaleDesc">Test worker scaling capabilities</span></li>
+                    <li><strong>Pages</strong> - <span data-i18n="pagesDesc">Deploy documentation</span></li>
                 </ul>
             </div>
         </div>
@@ -581,19 +614,218 @@ ansible-playbook my_playbook.yml</pre>
 
     <footer>
         <div class="container">
-            <p>Based on <a href="https://github.com/ansible/galaxy-operator" target="_blank">galaxy-operator</a></p>
+            <p data-i18n="basedOn">Based on <a href="https://github.com/ansible/galaxy-operator" target="_blank">galaxy-operator</a></p>
             <p>&copy; 2026 Ansible Galaxy Compose</p>
         </div>
     </footer>
 
     <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        const translations = {
+            en: {
+                title: "Ansible Galaxy Docker Compose",
+                subtitle: "Native Docker Compose configuration for local Galaxy server",
+                services: "Services",
+                webUi: "Galaxy Web UI",
+                api: "Galaxy API",
+                content: "Galaxy Content",
+                worker: "Galaxy Worker",
+                workerDesc: "Background task worker (scalable)",
+                quickStart: "Quick Start",
+                defaultPorts: "Default Ports",
+                service: "Service",
+                defaultCredentials: "Default Credentials",
+                username: "Username:",
+                password: "Password:",
+                configFiles: "Configuration Files",
+                envVars: ".env Variables",
+                dbSettings: "Database Settings",
+                dbUser: "Database username",
+                dbPass: "Database password",
+                dbName: "Database name",
+                dbHost: "Database host",
+                dbPort: "Database port",
+                redisSettings: "Redis Settings",
+                redisHost: "Redis host",
+                redisPort: "Redis port",
+                redisPass: "Redis password",
+                adminSettings: "Galaxy Admin Settings",
+                adminUser: "Admin username",
+                adminPass: "Admin password",
+                apiSettings: "API Settings",
+                apiHost: "Galaxy API hostname",
+                contentHost: "Content hostname",
+                contentOrigin: "Content origin URL",
+                apiPrefix: "API path prefix",
+                featureFlags: "Feature Flags",
+                requireApproval: "Require approval before publishing",
+                anonAccess: "Allow anonymous access",
+                anonDownload: "Allow anonymous downloads",
+                anonCollection: "Allow anonymous collection access",
+                eeEnabled: "Enable Execution Environments",
+                legacyRoles: "Enable legacy roles support",
+                workerScaling: "Worker Scaling",
+                workerReplicas: "Number of worker replicas",
+                database: "Database (DATABASES)",
+                dbEngine: "Database engine",
+                connMaxAge: "Connection lifetime (seconds)",
+                redisCache: "Redis Cache",
+                cacheUrl: "Redis connection URL",
+                security: "Security",
+                secretKey: "Django secret key",
+                allowedHosts: "Allowed host patterns",
+                storage: "Storage",
+                fileUpload: "Max file size in memory",
+                dataUpload: "Max data upload size",
+                galaxySettings: "Galaxy Settings",
+                distPath: "Default distribution path",
+                stagingPath: "Staging distribution path",
+                ansibleApi: "API hostname",
+                pulpContentHost: "Content host",
+                pulpContentPort: "Content port",
+                ansibleCmd: "ansible-galaxy Command Reference",
+                collectionCmd: "Collection Commands",
+                roleCmd: "Role Commands",
+                serverCmd: "Galaxy Server Commands",
+                configCmd: "Configuration",
+                fullWorkflow: "Example: Full Workflow",
+                storageVolumes: "Storage Volumes",
+                volume: "Volume",
+                description: "Description",
+                postgresData: "PostgreSQL database",
+                galaxyData: "Galaxy artifacts, uploads, and shared data",
+                githubActions: "GitHub Actions",
+                githubActionsDesc: "This project includes automated workflows:",
+                ciDesc: "Continuous integration testing",
+                releaseDesc: "Build and publish Galaxy collection",
+                scaleDesc: "Test worker scaling capabilities",
+                pagesDesc: "Deploy documentation",
+                basedOn: "Based on"
+            },
+            zh: {
+                title: "Ansible Galaxy Docker Compose",
+                subtitle: "本地 Galaxy 服务器的原生 Docker Compose 配置",
+                services: "服务组件",
+                webUi: "Galaxy Web UI",
+                api: "Galaxy API",
+                content: "Galaxy Content",
+                worker: "Galaxy Worker",
+                workerDesc: "后台任务工作节点（可扩展）",
+                quickStart: "快速开始",
+                defaultPorts: "默认端口",
+                service: "服务",
+                defaultCredentials: "默认凭证",
+                username: "用户名:",
+                password: "密码:",
+                configFiles: "配置文件",
+                envVars: ".env 变量",
+                dbSettings: "数据库设置",
+                dbUser: "数据库用户名",
+                dbPass: "数据库密码",
+                dbName: "数据库名称",
+                dbHost: "数据库主机",
+                dbPort: "数据库端口",
+                redisSettings: "Redis 设置",
+                redisHost: "Redis 主机",
+                redisPort: "Redis 端口",
+                redisPass: "Redis 密码",
+                adminSettings: "Galaxy 管理员设置",
+                adminUser: "管理员用户名",
+                adminPass: "管理员密码",
+                apiSettings: "API 设置",
+                apiHost: "Galaxy API 主机名",
+                contentHost: "Content 主机名",
+                contentOrigin: "Content 原始 URL",
+                apiPrefix: "API 路径前缀",
+                featureFlags: "功能开关",
+                requireApproval: "发布前需要审批",
+                anonAccess: "允许匿名访问",
+                anonDownload: "允许匿名下载",
+                anonCollection: "允许匿名访问集合",
+                eeEnabled: "启用执行环境",
+                legacyRoles: "启用传统角色支持",
+                workerScaling: "Worker 扩展",
+                workerReplicas: "Worker 副本数量",
+                database: "数据库 (DATABASES)",
+                dbEngine: "数据库引擎",
+                connMaxAge: "连接生命周期（秒）",
+                redisCache: "Redis 缓存",
+                cacheUrl: "Redis 连接 URL",
+                security: "安全设置",
+                secretKey: "Django 密钥",
+                allowedHosts: "允许的主机模式",
+                storage: "存储",
+                fileUpload: "内存中最大文件大小",
+                dataUpload: "最大数据上传大小",
+                galaxySettings: "Galaxy 设置",
+                distPath: "默认分发路径",
+                stagingPath: "预发布分发路径",
+                ansibleApi: "API 主机名",
+                pulpContentHost: "Content 主机",
+                pulpContentPort: "Content 端口",
+                ansibleCmd: "ansible-galaxy 命令参考",
+                collectionCmd: "集合命令",
+                roleCmd: "角色命令",
+                serverCmd: "Galaxy 服务器命令",
+                configCmd: "配置",
+                fullWorkflow: "示例：完整工作流",
+                storageVolumes: "存储卷",
+                volume: "卷",
+                description: "描述",
+                postgresData: "PostgreSQL 数据库",
+                galaxyData: "Galaxy 制品、上传文件及共享数据",
+                githubActions: "GitHub Actions",
+                githubActionsDesc: "本项目包含以下自动化工作流：",
+                ciDesc: "持续集成测试",
+                releaseDesc: "构建和发布 Galaxy 集合",
+                scaleDesc: "测试 Worker 扩展能力",
+                pagesDesc: "部署文档",
+                basedOn: "基于"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
             
-            document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            document.documentElement.lang = lang;
+            localStorage.setItem('galaxy-docs-lang', lang);
         }
+
+        function detectBrowserLanguage() {
+            const savedLang = localStorage.getItem('galaxy-docs-lang');
+            if (savedLang) {
+                return savedLang;
+            }
+            
+            const browserLang = navigator.language || navigator.userLanguage;
+            if (browserLang.startsWith('zh')) {
+                return 'zh';
+            }
+            return 'en';
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLanguage(btn.getAttribute('data-lang'));
+            });
+        });
+
+        const initialLang = detectBrowserLanguage();
+        setLanguage(initialLang);
     </script>
 </body>
 </html>
