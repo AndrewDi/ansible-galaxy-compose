@@ -4,6 +4,10 @@
 [![Release](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/release.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/release.yml)
 [![Scale Test](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/scale-test.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/scale-test.yml)
 
+**📚 Documentation: [https://andrewdi.github.io/ansible-galaxy-compose/](https://andrewdi.github.io/ansible-galaxy-compose/)**
+
+---
+
 Native Docker Compose configuration based on [galaxy-operator](https://github.com/ansible/galaxy-operator).
 
 ## Components
@@ -243,6 +247,7 @@ galaxy-web:
 
 ## Related Links
 
+- [📚 Documentation](https://andrewdi.github.io/ansible-galaxy-compose/) - Full documentation with config reference
 - [Galaxy Operator Documentation](https://galaxy-operator.readthedocs.io/)
 - [Pulp Project](https://pulpproject.org/)
 - [Ansible Galaxy](https://galaxy.ansible.com/)

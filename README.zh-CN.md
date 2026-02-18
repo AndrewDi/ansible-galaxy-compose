@@ -4,6 +4,10 @@
 [![Release](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/release.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/release.yml)
 [![Scale Test](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/scale-test.yml/badge.svg)](https://github.com/AndrewDi/ansible-galaxy-compose/actions/workflows/scale-test.yml)
 
+**📚 文档: [https://andrewdi.github.io/ansible-galaxy-compose/](https://andrewdi.github.io/ansible-galaxy-compose/)**
+
+---
+
 基于 [galaxy-operator](https://github.com/ansible/galaxy-operator) 的原生 Docker Compose 配置。
 
 ## 组件
@@ -243,6 +247,7 @@ galaxy-web:
 
 ## 相关链接
 
+- [📚 文档](https://andrewdi.github.io/ansible-galaxy-compose/) - 完整配置参考文档
 - [Galaxy Operator 文档](https://galaxy-operator.readthedocs.io/)
 - [Pulp Project](https://pulpproject.org/)
 - [Ansible Galaxy](https://galaxy.ansible.com/)
