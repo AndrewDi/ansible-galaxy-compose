@@ -120,12 +120,3 @@ CSRF_TRUSTED_ORIGINS = [
     "http://galaxy-web.orb.local",
     "https://galaxy-web.orb.local",
 ]
-
-# Secure proxy SSL header (for nginx reverse proxy)
-# Only enable if behind HTTPS proxy
-if os.environ.get('HTTPS_PROXY', 'false').lower() == 'true':
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Session cookie settings
-SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
-CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
