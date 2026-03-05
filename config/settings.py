@@ -114,5 +114,18 @@ GALAXY_HOST = os.environ.get('GALAXY_API_HOSTNAME', 'http://localhost').replace(
 CONTENT_ORIGIN = os.environ.get('CONTENT_ORIGIN', "https://{GALAXY_HOST}")
 CSRF_TRUSTED_ORIGINS = [
     f"http://{GALAXY_HOST}",
-    f"https://{GALAXY_HOST}"
+    f"https://{GALAXY_HOST}",
+    "http://localhost",
+    "https://localhost",
+    "http://galaxy-web.orb.local",
+    "https://galaxy-web.orb.local",
 ]
+
+# Secure proxy SSL header (for nginx reverse proxy)
+# Only enable if behind HTTPS proxy
+if os.environ.get('HTTPS_PROXY', 'false').lower() == 'true':
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Session cookie settings
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
